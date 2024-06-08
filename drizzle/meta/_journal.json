@@ -1,0 +1,13 @@
+{
+  "version": "6",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1717081374436,
+      "tag": "0000_charming_yellow_claw",
+      "breakpoints": true
+    }
+  ]
+}
