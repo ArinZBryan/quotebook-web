@@ -13,7 +13,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Toaster } from "@/components/ui/toaster";
-import { RichQuote } from "@/pages/api/db/raw/types";
+import { RichQuote } from "@/app/api/db/types";
 
 import { FilterOptionsPanel } from './filteroptions'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -280,7 +280,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                     <tr>
                         <td>
                             {selectedData.map((v, i) =>
-                                <div className={`${i % 2 == 0 ? " bg-gray-950" : ""}`} key={i}>
+                                <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
                                     <TableRow rowData={v} colWidths={colWidths} formData={memoizedData[i]} onEditClose={() => onTableInvalid()} />
                                 </div>
                             )}

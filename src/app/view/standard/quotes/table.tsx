@@ -270,7 +270,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                     <tr>
                         <td>
                             {selectedData.map((v, i) =>
-                                <div className={`${i % 2 == 0 ? " bg-gray-950" : ""}`} key={i}>
+                                <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
                                     <TableRow rowData={v} colWidths={colWidths} formData={memoizedData[i]} onEditClose={() => onTableInvalid()} />
                                 </div>
                             )}

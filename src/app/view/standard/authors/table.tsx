@@ -182,7 +182,7 @@ export function Table({ data }: { data: Author[] }) {
                     <tr>
                         <td>
                             {selectedData.map((v, i) =>
-                                <div className={`${i % 2 == 0 ? " bg-gray-950" : ""}`} key={i}>
+                                <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
                                     <TableRow rowData={v} colWidths={colWidths} formData={filteredData[i]}/>
                                 </div>
                             )}
