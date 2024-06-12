@@ -29,7 +29,8 @@ export async function POST(req : Request) {
     }
 }
 
-async function respond(newData: formData) {
+export async function respond(newData: formData) {
+    "use server"
     const tagvalues = newData.tags.map((t) => {return {tag: t.id, quote: newData.id}})
 
     const authors = await db.select({ id: db_tables.authors.id })

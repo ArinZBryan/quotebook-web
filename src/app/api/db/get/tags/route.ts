@@ -32,6 +32,7 @@ export async function POST(req : Request) {
 
 export async function getTagsRaw(limit?: number): Promise<Tag[]>
 {
+    "use server"
     let lim = -1;
     if (limit != undefined && limit > 0) { lim = limit; }
 

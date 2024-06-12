@@ -30,7 +30,8 @@ export async function GET() {
     }
 }
 
-async function getQuotesRaw(limit?: number): Promise<RichQuote[]> {
+export async function getQuotesRaw(limit?: number): Promise<RichQuote[]> {
+    "use server"
     let lim = -1;
     if (limit != undefined && limit > 0) { lim = limit; }
 

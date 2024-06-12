@@ -30,8 +30,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
-import { LogOut } from "lucide-react"
+import { useRouter } from 'next/navigation'
+import { LogOut, WrenchIcon } from "lucide-react"
 export function TitleBar() {
+
+    const router = useRouter()
 
     var hidePages = true;
     const { data: session } = useSession();
@@ -53,9 +56,13 @@ export function TitleBar() {
                         <DropdownMenuTrigger asChild>
                                 <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid"/>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent className="max-w-[13rem]">
                             <DropdownMenuLabel>Logged in as {session?.user?.name}</DropdownMenuLabel>
                             <DropdownMenuSeparator></DropdownMenuSeparator>
+                            <DropdownMenuItem onClick={() => {router.push("/settings")}}>
+                                <WrenchIcon className="mr-2 h-4 w-4"/>
+                                <Link href="/settings">Settings</Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => {signOut({callbackUrl:"/"})}}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 <span>Log Out</span>

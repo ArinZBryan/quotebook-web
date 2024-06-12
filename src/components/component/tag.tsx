@@ -1,4 +1,4 @@
-import type { Tag } from "@/pages/api/db/raw/types"
+import type { Author, Tag } from "@/app/api/db/types"
 import React from "react"
 import {
     HoverCard,
@@ -33,7 +33,7 @@ export function TagStd({tag, overrideColor}: {tag: Tag, overrideColor? : string}
     
     return (
         <HoverCard>
-            <HoverCardTrigger className="rounded-full w-fit p-1 pl-3 pr-3 text-black m-1" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 hover:`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
                 {tagText}
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
@@ -69,10 +69,10 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {ta
     return (
         <HoverCard>
             <HoverCardTrigger className="rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
-            <span onMouseEnter={() => setDeleteHidden(true)} onMouseLeave={() => setDeleteHidden(false)} className="flex flex-row w-fit">
+            <span onMouseEnter={() => setDeleteHidden(false)} onMouseLeave={() => setDeleteHidden(true)} className="flex flex-row w-fit">
                 {tagText}
                 {
-                    controlHidden ? 
+                    !controlHidden ? 
                         (controlState == "pin" ? 
                             <PinIcon onClick={() => {setControlState("unpin"); onAdd(tag)}} /> : 
                             <PinOffIcon onClick={() => {setControlState("pin"); onRemove(tag)}} />
@@ -93,17 +93,78 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {ta
         </HoverCard>
     )
 }
-/*
-<HoverCardTrigger className="rounded-full w-fit p-1 pl-3 pr-3 text-black m-1" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
-                <div onMouseEnter={() => setDeleteHidden(true)} onMouseLeave={() => setDeleteHidden(false)} className="flex flex-row">
+
+export function AuthorTagStd({author, overrideColor}: {author: Author, overrideColor? : string}) : JSX.Element
+{
+    const tag = author.tag
+    let tagText = `${tag.category}:${tag.title}`
+    if (!(tag.title == undefined || tag.category == undefined)) {
+    if (tagText.length > tagCutoff) {
+        if (tag.category == "Miscellaneous") {
+            tagText = `Misc.:${tag.title}`
+            if (tagText.length > tagCutoff) {
+                tagText = `Misc.:${tag.title.substring(0, tagCutoff - 8 - 1)}...`
+            }
+        } else {
+            tagText = `${tag.category}:${tag.title.substring(0, tagCutoff - tag.category.length - 3 - 1)}...`
+        }
+    }
+    }
+    
+    return (
+        <HoverCard>
+            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 hover:`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+                {tagText}
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit">
+                <div className="pl-2 pr-2">
+                    <div className="text-xl">{tag.title}</div>
+                    <div style={{color:`#${colours[tag.category as keyof typeof colours]}`}}>{tag.category}</div>
+                    <div className="h-3"></div>
+                    <div className="text-gray-500">#{tag.id}</div>
+                </div>
+            </HoverCardContent>
+        </HoverCard>
+    )
+}
+
+export function AuthorTagAdmin({author, onRemove, onAdd, overrideColor, startState }: {author: Author, onRemove: (authorRemoved : Author) => void, onAdd: (authorAdded: Author) => void, overrideColor? : string, startState?: "pin" | "unpin" }) : JSX.Element
+{   
+    const tag = author.tag;
+    let title = tag.title;
+    let category = "Author"
+    let tagText = `${category}:${title}`
+    if (tagText.length > tagCutoff) {
+        tagText = `${category}:${title.substring(0, tagCutoff - category.length - 3 - 1)}...`
+    }
+
+    const [controlHidden, setDeleteHidden] = React.useState(true);
+    const [controlState, setControlState] = React.useState(startState)
+    return (
+        <HoverCard>
+            <HoverCardTrigger className="rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <span onMouseEnter={() => setDeleteHidden(false)} onMouseLeave={() => setDeleteHidden(true)} className="flex flex-row w-fit">
                 {tagText}
                 {
-                    controlHidden ? 
-                        (controlState == "unpin" ? 
-                            <PinIcon onClick={() => {setControlState("pin"); onAdd(tag)}} /> : 
-                            <PinOffIcon onClick={() => {setControlState("unpin"); onRemove(tag)}} />
+                    !controlHidden ? 
+                        (controlState == "pin" ? 
+                            <PinIcon onClick={() => {setControlState("unpin"); onAdd(author)}} /> : 
+                            <PinOffIcon onClick={() => {setControlState("pin"); onRemove(author)}} />
                         ) : ""
                 }
-                </div>
+                </span>
             </HoverCardTrigger>
-*/
+            
+            <HoverCardContent className="w-fit">
+                <div className="pl-2 w-fit">
+                    <div className="text-xl">{tag.title}</div>
+                    <div style={{color:`#${colours[tag.category as keyof typeof colours]}`}}>{tag.category}</div>
+                    <div className="h-3"></div>
+                    <div className="text-gray-500">#{tag.id}</div>
+                    
+                </div>
+            </HoverCardContent>
+        </HoverCard>
+    )
+}
+

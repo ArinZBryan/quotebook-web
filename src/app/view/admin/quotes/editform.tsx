@@ -33,12 +33,12 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
     })
 
     useEffect(() => {
-        fetch(`/api/db/raw/authors`)
+        fetch(`/api/db/get/authors`)
             .then((res) => res.json())
             .then((data) => {
                 setAuthorData(data)
         })
-        fetch(`/api/db/raw/tags`)
+        fetch(`/api/db/get/tags`)
             .then((res) => res.json())
             .then((data) => {
                 setTagData(data)

@@ -27,8 +27,8 @@ export async function POST(req : Request) {
     }
 }
 
-async function respond(newData: formData) {
-    console.log(newData)
+export async function respond(newData: formData) {
+    "use server"
     db.update(db_tables.authors)
         .set({
             preferred_name: newData.preferred_name,

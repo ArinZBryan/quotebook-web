@@ -1,0 +1,13 @@
+- [ ]  Dashboard
+    - [ ] Associate Authors to profiles
+    - [ ] Collect Basic Statistics Per profile
+- [ ] Stats page
+    - [ ] Collect detailed statistics per author
+    - [ ] Collect detailed statistics per tag
+- [ ] Integrate bot API into this next-project
+    - [ ] Merge git trees
+    - [ ] Make API publicly available
+- [ ] Deploy to vercel
+    - [ ] Set up cron jobs for bot api
+    - [ ] Deploy git repo for vercel
+    - [ ] Test all features work

@@ -6,6 +6,7 @@ import { db, db_tables } from "@/schema"
 import { eq, like } from "drizzle-orm" 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: false,
   session: {
     strategy: "database"
   },
@@ -44,7 +45,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     
     async session({ session, token, user }) {
-      session.user.admin = user.admin
+      session.user.admin = user.admin;
+      session.user.linked_author = user.linked_author;
       return session;
     }
     

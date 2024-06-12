@@ -44,7 +44,7 @@ export function EditForm({ rowData }: { rowData: Author }) {
     const [deleteResult, setDeleteResult] = useState<{ successful: boolean, reason: string } | null>(null)
 
     useEffect(() => {
-        fetch(`/api/db/raw/tags`)
+        fetch(`/api/db/get/tags`)
             .then((res) => res.json())
             .then((data: Tag[]) => {
                 setTagData(data.filter((v) => v.category == "Person"))

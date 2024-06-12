@@ -1,6 +1,6 @@
 "use client"
 import { Suspense, useEffect, useState } from "react"
-import { Author, RichQuote, Tag } from "@/pages/api/db/raw/types"
+import { Author, RichQuote, Tag } from "@/app/api/db/types"
 import { TitleBar } from "@/components/component/titlebar"
 import { SessionProvider } from "next-auth/react"
 import { ShowOnLogin } from "@/components/component/showonlogin"
@@ -25,7 +25,7 @@ export default function Page() {
             <ShowOnLogin>
                 <Tabs defaultValue="quotes" className="flex flex-col w-[full] items-center overflow-hidden" onValueChange={(tab) => {
                     setLoading(true)
-                    fetch(`/api/db/raw/${tab}`)
+                    fetch(`/api/db/get/${tab}`)
                         .then((res) => {
                             if (res.status >= 400) { router.push(`/unsuccessful?status=${res.status}`) }
                             return res.json()
@@ -46,7 +46,7 @@ export default function Page() {
                                 {
                                     !isLoading ? <QuotesTable data={data as RichQuote[]} onTableInvalid={() => {
                                         setLoading(true)
-                                        fetch('/api/db/raw/all')
+                                        fetch('/api/db/get/all')
                                             .then((res) => {
                                                 if (res.status >= 400) { router.push(`/unsuccessful?status=${res.status}`) }
                                                 return res.json()
@@ -60,7 +60,7 @@ export default function Page() {
                                 <ScrollToTop />
                                 <Reload onClick={() => {
                                     setLoading(true)
-                                    fetch('/api/db/raw/all')
+                                    fetch('/api/db/get/all')
                                         .then((res) => {
                                             if (res.status >= 400) { router.push(`/unsuccessful?status=${res.status}`) }
                                             return res.json()
@@ -82,7 +82,7 @@ export default function Page() {
                                 <ScrollToTop />
                                 <Reload onClick={() => {
                                     setLoading(true)
-                                    fetch('/api/db/raw/authors')
+                                    fetch('/api/db/get/authors')
                                         .then((res) => {
                                             if (res.status >= 400) { router.push(`/unsuccessful?status=${res.status}`) }
                                             return res.json()
@@ -102,7 +102,7 @@ export default function Page() {
                                 <ScrollToTop />
                                 <Reload onClick={() => {
                                     setLoading(true)
-                                    fetch('/api/db/raw/tags')
+                                    fetch('/api/db/get/tags')
                                         .then((res) => {
                                             if (res.status >= 400) { router.push(`/unsuccessful?status=${res.status}`) }
                                             return res.json()

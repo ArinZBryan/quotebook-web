@@ -3,6 +3,12 @@ import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import type { AdapterAccountType } from "@auth/core/adapters"
 
+if (false) {
+  console.log(process.env.SQLITE_URL);
+  console.log(process.env.SQLITE_TOKEN);
+}
+
+
 export const connection = createClient({
   url: process.env.SQLITE_URL!,
   authToken: process.env.SQLITE_TOKEN!,
@@ -17,7 +23,9 @@ export const users = sqliteTable("user", {
   email: text("email").notNull(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
-  admin: text("admin").notNull().default("false")
+  admin: text("admin").notNull().default("false"),
+  linked_author: integer("linked_author")
+    .references(() => authors.id)
 })
  
 export const accounts = sqliteTable(

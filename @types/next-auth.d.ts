@@ -1,3 +1,4 @@
+import { Author } from '@/app/api/db/types';
 import NextAuth, { DefaultSession, DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
@@ -7,6 +8,7 @@ declare module 'next-auth' {
   export interface User extends DefaultUser {
     /** Define any user-specific variables here to make them available to other code inferences */
     admin: string;
+    linked_author: number | null;
     // Any other attributes you need from either your User table columns or additional fields during a session callback
   }
 

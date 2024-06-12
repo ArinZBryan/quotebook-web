@@ -25,8 +25,8 @@ export async function POST(req : Request) {
         return res;        
     }
 }
-async function respond(newData: formData) {
-
+export async function respond(newData: formData) {
+    "use server"
     db.update(db_tables.tags)
         .set({
             title: newData.title,

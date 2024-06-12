@@ -24,7 +24,8 @@ export async function POST(req: Request) {
     }
 }
 
-async function respond(newData: formData): Promise<{ successful: boolean, reason: string } | void> {
+export async function respond(newData: formData): Promise<{ successful: boolean, reason: string } | void> {
+    "use server"
     let res = {
         'successful': true,
         'reason': ""
