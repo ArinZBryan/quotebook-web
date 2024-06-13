@@ -9,6 +9,7 @@ import { getAuthors as get_authors } from "@/app/api/db/get/authors/route";
 import { getTagsRaw as get_tags} from "@/app/api/db/get/tags/route";
 import { getQuotesRaw as get_quotes} from "@/app/api/db/get/quotes/route";
 import { getUserData as get_userauthor} from "@/app/api/db/get/userauthor/route";
+import { redirect } from "next/navigation";
 
 export const api = {
     get: {
@@ -32,4 +33,8 @@ export const api = {
             update_linked_author: updateAuthorName
         }
     }
+}
+
+export function triggerServerSideReload(url:string) {
+    redirect(`${url}?${Math.random()}`)
 }
