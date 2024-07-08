@@ -3,19 +3,19 @@ import { Login } from '@/components/component/login'
 import { ShowOnLogin } from '@/components/component/showonlogin'
 import { TitleBar } from '@/components/component/titlebar'
 import { SessionProvider, useSession } from 'next-auth/react'
-
+import { Dashboard } from './dashboard/dashboard'
 
 export default function Home() {
 
     return (<div>
         <SessionProvider>
-            <TitleBar/>
+            <TitleBar />
             <ShowOnLogin fallback={
-                <Login/>
+                <Login />
             }>
-                <>Logged In</>
-                
+                <Dashboard/>
             </ShowOnLogin>
         </SessionProvider>
     </div>)
 }
+

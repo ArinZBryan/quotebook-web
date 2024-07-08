@@ -5,9 +5,13 @@
         > Partially done, working implementation for `/view/admin/quotes`
     - [x] Update editforms
         > Didn't do, they really need to be client components
-- [ ] Dashboard
-    - [ ] Associate Authors to profiles
-    - [ ] Collect Basic Statistics Per profile
+- [x] Dashboard
+    - [x] Associate Authors to profiles
+    - [x] Remove @mui/x-chartx + @emotion
+    - [x] Add charts.js react bindings 
+    - [x] Collect Basic Statistics Per profile
+    - [ ] Display oldest quote
+    - [ ] Ask for more dashboard data suggestions.
 - [ ] Stats page
     - [ ] Collect detailed statistics per author
     - [ ] Collect detailed statistics per tag

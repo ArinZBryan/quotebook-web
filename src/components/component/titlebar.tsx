@@ -23,7 +23,8 @@ import {
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from 'next/navigation'
-import { LogOut, TableIcon, WrenchIcon } from "lucide-react"
+import { LayoutDashboardIcon, LogOut, PieChartIcon, TableIcon, WrenchIcon } from "lucide-react"
+import useWindowDimensions from "@/lib/useWindowDimensions"
 import React from "react"
 export function TitleBar() {
 
@@ -35,6 +36,8 @@ export function TitleBar() {
         hidePages = false;
     }
 
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions()
+
     return (
         <div className="flex h-14 items-center px-4 border-b md:h-20 md:px-6">
             <Link className="flex items-center gap-2 font-semibold" href="/">
@@ -44,9 +47,14 @@ export function TitleBar() {
             <div className="flex-1" />
             {!hidePages ?
                 (<>
-                    <div className="pr-5">
+                    { windowWidth! > 584 ?  
+                      <div className="pr-5">
                         <NavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
+                      </div>
+                      : <div className="">
+                      <CondensedNavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
                     </div>
+                    }
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                                 <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid"/>
@@ -95,10 +103,10 @@ function NavButtons({ userIsAdmin } : { userIsAdmin: boolean}) {
             <NavigationMenuTrigger>Statistics</NavigationMenuTrigger>
             <NavigationMenuContent className="z-[20]">
             <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
-              <ListItem href="/view/stats/authors" title="Authors">
+              <ListItem href="/stats/authors" title="Authors">
                 View Statitics for Authors 
               </ListItem>
-              <ListItem href="/view/stats/tags" title="Tags">
+              <ListItem href="/stats/tags" title="Tags">
                 View Statistics for Tags
               </ListItem>
             </ul>
@@ -114,6 +122,50 @@ function NavButtons({ userIsAdmin } : { userIsAdmin: boolean}) {
         </NavigationMenuList>
       </NavigationMenu>
       )
+}
+
+function CondensedNavButtons({ userIsAdmin } : { userIsAdmin: boolean}) {
+  return (<NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger><TableIcon/></NavigationMenuTrigger>
+          <NavigationMenuContent className="z-[20]">
+          <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+            <ListItem href={ userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
+              { userIsAdmin ? "Edit and View" : "View"} All Authors 
+            </ListItem>
+            <ListItem href={ userIsAdmin ? "/view/admin/tags" : "/view/standard/tags"} title="Tags">
+              { userIsAdmin ? "Edit and View" : "View"} All Tags
+            </ListItem>
+            <ListItem href={ userIsAdmin ? "/view/admin/quotes" : "/view/standard/quotes"} title="Quotes">
+              { userIsAdmin ? "Edit and View" : "View"} All Quotes
+            </ListItem>
+          </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger><PieChartIcon/></NavigationMenuTrigger>
+          <NavigationMenuContent className="z-[20]">
+          <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+            <ListItem href="/stats/authors" title="Authors">
+              View Statitics for Authors 
+            </ListItem>
+            <ListItem href="/stats/tags" title="Tags">
+              View Statistics for Tags
+            </ListItem>
+          </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+        <Link href="/" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <LayoutDashboardIcon/>
+          </NavigationMenuLink>
+        </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+    )
 }
 
 const ListItem = React.forwardRef<

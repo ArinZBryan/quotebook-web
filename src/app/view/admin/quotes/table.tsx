@@ -69,7 +69,17 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     const [colsToHide, setColsToHide] = useState<(keyof RichQuote)[]>([])
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" })
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "author" })
-    const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({ 'id': 100 / 8, 'preamble': 100 / 8, 'quote': 100 / 8, 'author': 100 / 8, 'date': 100 / 8, 'confirmed_date': 100 / 8, 'tags': 100 / 8, 'message_id': 100 / 8 })
+    const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({
+        'id': 100 / 9, 
+        'preamble': 100 / 9,
+        'quote': 100 / 9,
+        'author': 100 / 9,
+        'date': 100 / 9,
+        'confirmed_date': 100 / 9,
+        'tags': 100 / 9,
+        'message_id': 100 / 9,
+        'message_date': 100 / 9
+    })
 
     const { toast } = useToast()
 
@@ -146,8 +156,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                                         <ResizableHandle withHandle={true} />
                                     </>
                                 ) : <></>}
-                                {colsToHide.find((v) => v == "preamble") == undefined ? (
-                                    <>
+                                    <div style={{display: colsToHide.find((v) => v == "preamble") == undefined ? "flex" : "none"}}>
                                         <ResizablePanel onResize={(b) => { setColWidthsW("preamble", b) }}>
                                             <div className="flex h-full items-center justify-center p-6">
                                                 <div className="flex justify-center flex-grow">
@@ -162,7 +171,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                                             </div>
                                         </ResizablePanel>
                                         <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
+                                    </div>
                                 {colsToHide.find((v) => v == "quote") == undefined ? (
                                     <>
                                         <ResizablePanel onResize={(c) => { setColWidthsW("quote", c) }}>
@@ -257,6 +266,23 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                                         </ResizablePanel>
                                         <ResizableHandle withHandle={true} />
                                     </>) : <></>}
+                                {colsToHide.find((v) => v == "message_date") == undefined ? (
+                                    <>
+                                        <ResizablePanel onResize={(f) => { setColWidthsW("message_date", f) }}>
+                                            <div className="flex h-full items-center justify-center p-6">
+                                                <div className="flex justify-center flex-grow">
+                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "message_date"]) }}>Message Date</span>
+                                                </div>
+                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                                    setSortOptions({ sort: v.direction, col: "message_date" });
+                                                    toast({
+                                                        description: `Sorted into ${v.direction} order by message date`,
+                                                    });
+                                                }} />
+                                            </div>
+                                        </ResizablePanel>
+                                        <ResizableHandle withHandle={true} />
+                                    </>) : <></>}
                                 {colsToHide.find((v) => v == "tags") == undefined ? (
                                     <>
                                         <ResizablePanel onResize={(f) => { setColWidthsW("tags", f) }}>
@@ -324,6 +350,8 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                                                 ))}
                                             </div>
                                         ), [rowData.tags]);
+                                    case "message_date":
+                                        return rowData.message_date?.substring(0,10).replaceAll('-','/')
                                     default:
                                         return String(rowData[key as keyof T]);
                                 }

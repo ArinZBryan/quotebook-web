@@ -18,7 +18,7 @@ export function EditForm({ defaultData, formSubmit }: { defaultData : Author | n
     const [formData, setFormData] = useState<Author | null>(defaultData)
 
     useEffect(() => {
-        fetch(`/api/db/raw/authors`)
+        fetch(`/api/db/get/authors`)
             .then((res) => res.json())
             .then((data) => {
                 setAuthorData(data)

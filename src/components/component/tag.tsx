@@ -94,9 +94,15 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {ta
     )
 }
 
-export function AuthorTagStd({author, overrideColor}: {author: Author, overrideColor? : string}) : JSX.Element
+export function AuthorTagStd({author, overrideColor}: {author?: Author, overrideColor? : string}) : JSX.Element
 {
-    const tag = author.tag
+    let tag : Tag | null = null;
+    if (author == undefined) {
+        tag = {'id': -1, 'category': 'Miscellaneous', 'title': '[SYSTEM] Unknown'} as Tag
+        overrideColor = "555555"
+    } else {
+        tag = author.tag
+    }
     let tagText = `${tag.category}:${tag.title}`
     if (!(tag.title == undefined || tag.category == undefined)) {
     if (tagText.length > tagCutoff) {

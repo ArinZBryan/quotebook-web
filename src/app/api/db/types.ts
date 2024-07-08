@@ -1,4 +1,3 @@
-
 export type Tag = {
     id: number,
     category: "Person" | "Topic" | "Miscellaneous",
@@ -20,6 +19,7 @@ export type Quote = {
     date: string,
     confirmed_date: string,
     message_id: string,
+    message_date: string
 }
 
 export type RichQuote = {
@@ -30,5 +30,6 @@ export type RichQuote = {
     date: string,
     confirmed_date: string,
     message_id: string,
+    message_date: string,
     tags: Tag[]
 }

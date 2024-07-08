@@ -47,7 +47,8 @@ export async function getQuotesRaw(limit?: number): Promise<Quote[]>
         'quote': q.quote, 
         'author': q.author + "", 
         'confirmed_date': q.confirmed_date, 
-        'message_id': q.message_id
+        'message_id': q.message_id,
+        'message_date': q.message_date
     } } ) as Quote[]
 }
 

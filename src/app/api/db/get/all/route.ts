@@ -42,6 +42,7 @@ export async function getQuotesRaw(limit?: number): Promise<RichQuote[]> {
         date: db_tables.quotes.date,
         confirmed_date: db_tables.quotes.confirmed_date,
         message_id: db_tables.quotes.message_id,
+        message_date: db_tables.quotes.message_date,
         author_id: db_tables.authors.id,
         author_tag_id: db_tables.authors.tag,
         author_name: db_tables.authors.preferred_name,
@@ -78,6 +79,7 @@ export async function getQuotesRaw(limit?: number): Promise<RichQuote[]> {
             date: row.date,
             confirmed_date: row.confirmed_date,
             message_id: row.message_id,
+            message_date: row.message_date,
             tags: row.tags.split(",").map((substr) => substr.trim()).map(tagtext => { 
                 return {
                     'id':parseInt(tagtext.split(":")[2]),
