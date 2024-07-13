@@ -22,13 +22,9 @@ import {
   } from "@/components/ui/navigation-menu"  
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
-import { useRouter } from 'next/navigation'
 import { LayoutDashboardIcon, LogOut, PieChartIcon, TableIcon, WrenchIcon } from "lucide-react"
-import useWindowDimensions from "@/lib/useWindowDimensions"
 import React from "react"
 export function TitleBar() {
-
-    const router = useRouter()
 
     var hidePages = true;
     const { data: session } = useSession();
@@ -36,25 +32,21 @@ export function TitleBar() {
         hidePages = false;
     }
 
-    const { width: windowWidth, height: windowHeight } = useWindowDimensions()
-
     return (
-        <div className="flex h-14 items-center px-4 border-b md:h-20 md:px-6">
+        <div className="flex justify-between h-14 items-center px-4 border-b md:h-20 md:px-6">
             <Link className="flex items-center gap-2 font-semibold" href="/">
                 <MessageCircleIcon className="h-5 w-5" />
                 <span>Quotebook</span>
             </Link>
-            <div className="flex-1" />
+            <div className="" />
             {!hidePages ?
-                (<>
-                    { windowWidth! > 584 ?  
-                      <div className="pr-5">
+                (<div className="flex flex-row overflow-visible">
+                    <div className="hidden sm:pr-5 sm:block">
                         <NavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
-                      </div>
-                      : <div className="">
+                    </div>
+                    <div className="sm:hidden">
                       <CondensedNavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
                     </div>
-                    }
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                                 <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid"/>
@@ -62,9 +54,10 @@ export function TitleBar() {
                         <DropdownMenuContent className="max-w-[13rem]">
                             <DropdownMenuLabel>Logged in as {session?.user?.name}</DropdownMenuLabel>
                             <DropdownMenuSeparator></DropdownMenuSeparator>
-                            <DropdownMenuItem onClick={() => {router.push("/settings")}}>
-                                <WrenchIcon className="mr-2 h-4 w-4"/>
-                                <Link href="/settings">Settings</Link>
+                            <DropdownMenuItem>
+                              <Link href="/settings" className="w-full flex flex-row">
+                                <WrenchIcon className="mr-2 h-4 w-4"/>Settings
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => {signOut({callbackUrl:"/"})}}>
                                 <LogOut className="mr-2 h-4 w-4" />
@@ -72,7 +65,7 @@ export function TitleBar() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </>)
+                </div>)
                 :
                 (<Link href="/">Log In</Link>)
             }

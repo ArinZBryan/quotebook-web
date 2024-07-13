@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google"
 import Discord from "next-auth/providers/discord"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db, db_tables } from "@/schema"
-import { eq, like } from "drizzle-orm" 
+import { eq, like } from "drizzle-orm"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: false,
@@ -19,6 +19,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google, Discord],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
+      if (process.env.DEV_NOLOGIN == "true") { return true; }
       //pre-existing account
       console.log("tried to log in")
       const rows = await db.select()
@@ -43,12 +44,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return false
     },
-    
+
     async session({ session, token, user }) {
       session.user.admin = user.admin;
       session.user.linked_author = user.linked_author;
+
       return session;
     }
-    
+
   }
 })
