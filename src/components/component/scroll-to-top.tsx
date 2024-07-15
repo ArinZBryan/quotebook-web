@@ -36,7 +36,7 @@ export function ScrollToTop() {
     )
 }
 
-function ArrowUpIcon(props) {
+function ArrowUpIcon(props : any) {
     return (
         <svg
             {...props}

@@ -25,7 +25,7 @@ export function FilterIcon() {
   )
 }
 
-function Icon(props) {
+function Icon(props : any) {
   return (
     <svg
       {...props}
