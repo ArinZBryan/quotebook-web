@@ -19,7 +19,7 @@ export default async function Page() {
         <SessionProvider>
             <TitleBar />
             <div className="w-full">
-                <Suspense fallback={<SkeletonTable cols={8} />}>
+                <Suspense fallback={<SkeletonTable cols={9} />}>
                     <QuotesTable data={data as RichQuote[]} onTableInvalid={async () => {
                         "use server"
                         api.get.richquotes()
