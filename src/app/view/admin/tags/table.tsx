@@ -77,75 +77,67 @@ export function Table({ data }: { data: Tag[] }) {
     return (
         <>
             <Toaster />
-            <table className="w-full">
-                <tbody>
-                    <tr>
-                        <td className="">
-                            <ResizablePanelGroup direction="horizontal">
-                                <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
-                                    <div className="flex h-full items-center justify-center p-6">
-                                        <div className="flex justify-center flex-grow">
-                                            <span className="font-semibold">ID</span>
-                                        </div>
-                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                            setSortOptions({ sort: v.direction, col: "id" });
-                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
-                                            toast({
-                                                description: `Filtered to contain: ${v.contains}`,
-                                            });
-                                            toast({
-                                                description: `Sorted into ${v.direction} order by ID`,
-                                            });
-                                        }} />
-                                    </div>
-                                </ResizablePanel>
-                                <ResizableHandle withHandle={true} />
-                                <ResizablePanel onResize={(f) => { setColWidthsW("category", f) }}>
-                                    <div className="flex h-full items-center justify-center p-6">
-                                        <div className="flex justify-center flex-grow">
-                                            <span className="font-semibold">Category</span>
-                                        </div>
-                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "category" })
-                                            toast({
-                                                description: `Filtered to contain: ${v.contains}`,
-                                            });
-                                            toast({
-                                                description: `Sorted into ${v.direction} order by category`,
-                                            });
-                                        }} />
-                                    </div>
-                                </ResizablePanel>
-                                <ResizableHandle withHandle={true} />
-                                <ResizablePanel onResize={(g) => { setColWidthsW("title", g) }}>
-                                    <div className="flex h-full items-center justify-center p-6">
-                                        <div className="flex justify-center flex-grow">
-                                            <span className="font-semibold">Title</span>
-                                        </div>
-                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                            setSortOptions({ sort: v.direction, col: "title" });
-                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "title" })
-                                            toast({
-                                                description: `Filtered to contain: ${v.contains}`,
-                                            });
-                                            toast({
-                                                description: `Sorted into ${v.direction} order by title`,
-                                            });
-                                        }} />
-                                    </div>
-                                </ResizablePanel>
-                            </ResizablePanelGroup>
-                        </td>
-                    </tr>
-                    <tr>
-                        {selectedData.map((v, i) =>
-                            <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                                <TableRow rowData={v} colWidths={colWidths} formData={filteredData[i]} />
+            <div className="w-full">
+                <ResizablePanelGroup direction="horizontal">
+                    <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
+                        <div className="flex h-full items-center justify-center p-6">
+                            <div className="flex justify-center flex-grow">
+                                <span className="font-semibold">ID</span>
                             </div>
-                        )}
-                    </tr>
-                </tbody>
-            </table>
+                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                setSortOptions({ sort: v.direction, col: "id" });
+                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
+                                toast({
+                                    description: `Filtered to contain: ${v.contains}`,
+                                });
+                                toast({
+                                    description: `Sorted into ${v.direction} order by ID`,
+                                });
+                            }} />
+                        </div>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle={true} />
+                    <ResizablePanel onResize={(f) => { setColWidthsW("category", f) }}>
+                        <div className="flex h-full items-center justify-center p-6">
+                            <div className="flex justify-center flex-grow">
+                                <span className="font-semibold">Category</span>
+                            </div>
+                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "category" })
+                                toast({
+                                    description: `Filtered to contain: ${v.contains}`,
+                                });
+                                toast({
+                                    description: `Sorted into ${v.direction} order by category`,
+                                });
+                            }} />
+                        </div>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle={true} />
+                    <ResizablePanel onResize={(g) => { setColWidthsW("title", g) }}>
+                        <div className="flex h-full items-center justify-center p-6">
+                            <div className="flex justify-center flex-grow">
+                                <span className="font-semibold">Title</span>
+                            </div>
+                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                setSortOptions({ sort: v.direction, col: "title" });
+                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "title" })
+                                toast({
+                                    description: `Filtered to contain: ${v.contains}`,
+                                });
+                                toast({
+                                    description: `Sorted into ${v.direction} order by title`,
+                                });
+                            }} />
+                        </div>
+                    </ResizablePanel>
+                </ResizablePanelGroup>
+                {selectedData.map((v, i) =>
+                    <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
+                        <TableRow rowData={v} colWidths={colWidths} formData={filteredData[i]} />
+                    </div>
+                )}
+            </div>
         </>
     )
 }
