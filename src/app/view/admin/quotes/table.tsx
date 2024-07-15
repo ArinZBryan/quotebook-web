@@ -43,13 +43,13 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     function containsFunction(options: FilterOptions): (a: RichQuote) => boolean {
         if (options.contains == undefined) { return (a) => false; }
         return (a: RichQuote) => {
-            if (options.col == 'author') { 
+            if (options.col == 'author') {
                 return options.contains!.test(String(a.author.preferred_name))
             }
-            if (options.col == 'tags') { 
-                let ret = ""; 
+            if (options.col == 'tags') {
+                let ret = "";
                 a.tags.forEach((tag) => ret += `${tag.category} : ${tag.title}, `);
-                return options.contains!.test(ret); 
+                return options.contains!.test(ret);
             }
             return options.contains!.test(String(a[options.col]))
         }
@@ -66,11 +66,10 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         }
     }
 
-    const [colsToHide, setColsToHide] = useState<(keyof RichQuote)[]>([])
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" })
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "author" })
     const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({
-        'id': 100 / 9, 
+        'id': 100 / 27,
         'preamble': 100 / 9,
         'quote': 100 / 9,
         'author': 100 / 9,
@@ -81,7 +80,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         'message_date': 100 / 9
     })
 
-    const { toast } = useToast()
+    const {toast} = useToast()
 
     const elementRef = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState<number>(0);
@@ -107,8 +106,8 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     }, [data, filteroptions, sortoptions]);
 
     const selectedData = useMemo(() => {
-        return memoizedData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[]).filter(x => !colsToHide.includes(x))));
-    }, [memoizedData, colsToHide]);
+        return memoizedData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[])));
+    }, [memoizedData]);
 
     return (
         <>
@@ -116,190 +115,146 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
             <table className="w-full">
                 <tbody>
                     <tr>
-                        <td>
-                            <div className="flex flex-row flex-wrap justify-center" ref={elementRef}>
-                                {
-                                    colsToHide.map((v) =>
-                                        <div className="flex flex-row pl-1 pr-2 hover:line-through hover:cursor-pointer" onClick={() => {
-                                            setColsToHide(colsToHide.filter((a) => a !== v))
-                                        }}>
-                                            <EyeOffIcon />
-                                            <div className="pl-2">{v}</div>
-                                        </div>
-                                    )
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
                         <td className="">
                             <ResizablePanelGroup direction="horizontal">
-                                {colsToHide.find((v) => v == "id") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "id"]) }}>ID</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                                    setSortOptions({ sort: v.direction, col: "id" });
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                    toast({
-                                                        description: `Sorted into ${v.direction} order by ID`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>
-                                ) : <></>}
-                                    <div style={{display: colsToHide.find((v) => v == "preamble") == undefined ? "flex" : "none"}}>
-                                        <ResizablePanel onResize={(b) => { setColWidthsW("preamble", b) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "preamble"]) }}>Preamble</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preamble" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }} defaultSize={colWidths.id}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">ID</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                            setSortOptions({ sort: v.direction, col: "id" });
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                            toast({
+                                                description: `Sorted into ${v.direction} order by ID`,
+                                            });
+                                        }} />
                                     </div>
-                                {colsToHide.find((v) => v == "quote") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(c) => { setColWidthsW("quote", c) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "quote"]) }}>RichQuote</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "quote" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(b) => { setColWidthsW("preamble", b) }} defaultSize={colWidths.id}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Preamble</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preamble" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(c) => { setColWidthsW("quote", c) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">RichQuote</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "quote" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
 
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "author") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(d) => { setColWidthsW("author", d) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "author"]) }}>Author</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "author" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "date") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(e) => { setColWidthsW("date", e) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "date"]) }}>Date</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                                    setSortOptions({ sort: v.direction, col: "date" });
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "date" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                    toast({
-                                                        description: `Sorted into ${v.direction} order by date`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "confirmed_date") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(f) => { setColWidthsW("confirmed_date", f) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "confirmed_date"]) }}>Confirmed Date</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "confirmed_date" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "message_id") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(g) => { setColWidthsW("message_id", g) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "message_id"]) }}>Message ID</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                                    setSortOptions({ sort: v.direction, col: "message_id" });
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "message_id" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                    toast({
-                                                        description: `Sorted into ${v.direction} order by message_id`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "message_date") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(f) => { setColWidthsW("message_date", f) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "message_date"]) }}>Message Date</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setSortOptions({ sort: v.direction, col: "message_date" });
-                                                    toast({
-                                                        description: `Sorted into ${v.direction} order by message date`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-                                        <ResizableHandle withHandle={true} />
-                                    </>) : <></>}
-                                {colsToHide.find((v) => v == "tags") == undefined ? (
-                                    <>
-                                        <ResizablePanel onResize={(f) => { setColWidthsW("tags", f) }}>
-                                            <div className="flex h-full items-center justify-center p-6">
-                                                <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "tags"]) }}>Tags</span>
-                                                </div>
-                                                <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tags" })
-                                                    toast({
-                                                        description: `Filtered to contain: ${v.contains}`,
-                                                    });
-                                                }} />
-                                            </div>
-                                        </ResizablePanel>
-
-                                    </>) : <></>}
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(d) => { setColWidthsW("author", d) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Author</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "author" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(e) => { setColWidthsW("date", e) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Date</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                            setSortOptions({ sort: v.direction, col: "date" });
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "date" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                            toast({
+                                                description: `Sorted into ${v.direction} order by date`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(f) => { setColWidthsW("confirmed_date", f) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Confirmed Date</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "confirmed_date" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(g) => { setColWidthsW("message_id", g) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Message ID</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                                            setSortOptions({ sort: v.direction, col: "message_id" });
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "message_id" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                            toast({
+                                                description: `Sorted into ${v.direction} order by message_id`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(f) => { setColWidthsW("message_date", f) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Message Date</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setSortOptions({ sort: v.direction, col: "message_date" });
+                                            toast({
+                                                description: `Sorted into ${v.direction} order by message date`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
+                                <ResizableHandle withHandle={true} />
+                                <ResizablePanel onResize={(f) => { setColWidthsW("tags", f) }}>
+                                    <div className="flex h-full items-center justify-center p-6">
+                                        <div className="flex justify-center flex-grow">
+                                            <span className="font-semibold">Tags</span>
+                                        </div>
+                                        <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                                            setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tags" })
+                                            toast({
+                                                description: `Filtered to contain: ${v.contains}`,
+                                            });
+                                        }} />
+                                    </div>
+                                </ResizablePanel>
                             </ResizablePanelGroup>
                         </td>
                     </tr>
@@ -351,7 +306,7 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                                             </div>
                                         ), [rowData.tags]);
                                     case "message_date":
-                                        return rowData.message_date?.substring(0,10).replaceAll('-','/')
+                                        return rowData.message_date?.substring(0, 10).replaceAll('-', '/')
                                     default:
                                         return String(rowData[key as keyof T]);
                                 }

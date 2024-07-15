@@ -41,7 +41,6 @@ export function Table({ data }: { data: Author[] }) {
         };
     }
 
-    const [colsToHide, setColsToHide] = useState<(keyof Author)[]>([]);
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" });
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "preferred_name" });
     const [colWidths, setColWidths] = useState<{ [T in keyof Author]: number }>({ 'id': 100 / 4, 'preferred_name': 100 / 4, 'search_text': 100 / 4, 'tag': 100 / 4 });
@@ -68,37 +67,19 @@ export function Table({ data }: { data: Author[] }) {
     }
 
     const filteredData = data.filter(containsFunction(filteroptions)).sort(sortFunction(sortoptions));
-    const selectedData = filteredData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[]).filter(x => !colsToHide.includes(x))))
+    const selectedData = filteredData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[])))
     return (
         <>
             <Toaster />
             <table className="w-full">
                 <tbody>
                     <tr>
-                        <td>
-                            <div className="flex flex-row flex-wrap justify-center" ref={elementRef}>
-                                {
-                                    colsToHide.map((v) =>
-                                        <div className="flex flex-row pl-1 pr-2 hover:line-through hover:cursor-pointer" onClick={() => {
-                                            setColsToHide(colsToHide.filter((a) => a !== v))
-                                        }}>
-                                            <EyeOffIcon />
-                                            <div className="pl-2">{v}</div>
-                                        </div>
-                                    )
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
                         <td className="">
                             <ResizablePanelGroup direction="horizontal">
-                                {colsToHide.find((v) => v == "id") == undefined ? (
-                                    <>
                                         <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
                                             <div className="flex h-full items-center justify-center p-6">
                                                 <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "id"]) }}>ID</span>
+                                                    <span className="font-semibold">ID</span>
                                                 </div>
                                                 <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
                                                     setSortOptions({ sort: v.direction, col: "id" });
@@ -113,14 +94,10 @@ export function Table({ data }: { data: Author[] }) {
                                             </div>
                                         </ResizablePanel>
                                         <ResizableHandle withHandle={true} />
-                                    </>
-                                ) : <></>}
-                                {colsToHide.find((v) => v == "preferred_name") == undefined ? (
-                                    <>
                                         <ResizablePanel onResize={(a) => { setColWidthsW("preferred_name", a) }}>
                                             <div className="flex h-full items-center justify-center p-6">
                                                 <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "preferred_name"]) }}>Preferred Name</span>
+                                                    <span className="font-semibold">Preferred Name</span>
                                                 </div>
                                                 <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
                                                     setSortOptions({ sort: v.direction, col: "preferred_name" });
@@ -135,14 +112,10 @@ export function Table({ data }: { data: Author[] }) {
                                             </div>
                                         </ResizablePanel>
                                         <ResizableHandle withHandle={true} />
-                                    </>
-                                ) : <></>}
-                                {colsToHide.find((v) => v == "search_text") == undefined ? (
-                                    <>
                                         <ResizablePanel onResize={(a) => { setColWidthsW("search_text", a) }}>
                                             <div className="flex h-full items-center justify-center p-6">
                                                 <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "search_text"]) }}>search_text</span>
+                                                    <span className="font-semibold">search_text</span>
                                                 </div>
                                                 <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
                                                     setSortOptions({ sort: v.direction, col: "search_text" });
@@ -157,14 +130,10 @@ export function Table({ data }: { data: Author[] }) {
                                             </div>
                                         </ResizablePanel>
                                         <ResizableHandle withHandle={true} />
-                                    </>
-                                ) : <></>}
-                                {colsToHide.find((v) => v == 'tag') == undefined ? (
-                                    <>
                                         <ResizablePanel onResize={(g) => { setColWidthsW("tag", g) }}>
                                             <div className="flex h-full items-center justify-center p-6">
                                                 <div className="flex justify-center flex-grow">
-                                                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { setColsToHide([...colsToHide, "tag"]) }}>Tags</span>
+                                                    <span className="font-semibold">Tags</span>
                                                 </div>
                                                 <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
                                                     setSortOptions({ sort: v.direction, col: "tag" });
@@ -175,7 +144,6 @@ export function Table({ data }: { data: Author[] }) {
                                                 }} />
                                             </div>
                                         </ResizablePanel>
-                                    </>) : <></>}
                             </ResizablePanelGroup>
                         </td>
                     </tr>
