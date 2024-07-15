@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth"
 
 import { Tag } from "@/app/api/db/types"
+import { api } from "@/api";
 
-import { db, db_tables } from "@/schema"
-import { eq } from "drizzle-orm"
 
 export async function POST(req: Request) {
     const session = await auth()
@@ -19,30 +18,10 @@ export async function POST(req: Request) {
         try {
             rawjson = (await req.json())
         } catch (e) { if (!(e instanceof TypeError)) throw e; }
-        const ret = respond(rawjson as formData)
+        const ret = api.delete.tag(rawjson as formData)
         const res = NextResponse.json(ret);
         return res;  
     }
-}
-
-export async function respond(newData: formData): Promise<{ successful: boolean, reason: string } | void> {
-    "use server"
-    let res = {
-        'successful': true,
-        'reason': ""
-    }
-
-    await db.delete(db_tables.tags)
-        .where(eq(db_tables.tags.id, newData.id))
-        .catch((reason) => {
-            console.log(reason)
-            res = {
-                'successful': false,
-                'reason': "Unknown Database Row Deletion Faliure"
-            }
-        })
-    
-    return res;
 }
 
 // update to conform with form page

@@ -1,15 +1,15 @@
-import { respond as delete_author } from "@/app/api/db/delete/author/route";
-import { respond as delete_tag } from "@/app/api/db/delete/tag/route";
-import { respond as modify_author } from "@/app/api/db/modify/author/route";
-import { respond as modify_tag } from "@/app/api/db/modify/tag/route"
-import { respond as modify_quote } from "@/app/api/db/modify/quote/route";
+import { respond as delete_author } from "@/app/api/db/delete/author/func";
+import { respond as delete_tag } from "@/app/api/db/delete/tag/func";
+import { respond as modify_author } from "@/app/api/db/modify/author/func";
+import { respond as modify_tag } from "@/app/api/db/modify/tag/func"
+import { respond as modify_quote } from "@/app/api/db/modify/quote/func";
 import { linkAuthorToAccount, unlinkAuthorToAccount, updateAuthorName } from "@/app/api/db/modify/settings"
-import { getQuotesRaw as get_richquotes } from "@/app/api/db/get/all/route"
-import { getAuthors as get_authors } from "@/app/api/db/get/authors/route";
-import { getTagsRaw as get_tags} from "@/app/api/db/get/tags/route";
-import { getQuotesRaw as get_quotes} from "@/app/api/db/get/quotes/route";
-import { getUserData as get_userauthor} from "@/app/api/db/get/userauthor/route";
-import { getLinkedUser as get_linkeduser } from "./app/api/db/get/linkedaccount/route";
+import { getQuotesRaw as get_richquotes } from "@/app/api/db/get/all/func"
+import { getAuthors as get_authors } from "@/app/api/db/get/authors/func";
+import { getTagsRaw as get_tags} from "@/app/api/db/get/tags/func";
+import { getQuotesRaw as get_quotes} from "@/app/api/db/get/quotes/func";
+import { getUserData as get_userauthor} from "@/app/api/db/get/userauthor/func";
+import { getLinkedUser as get_linkeduser } from "./app/api/db/get/linkedaccount/func";
 import { redirect } from "next/navigation";
 
 export const api = {
