@@ -1,7 +1,12 @@
 "use client"
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function page() {
+export default function Page() {
+    return <Suspense><InnerPage/></Suspense>
+}
+
+function InnerPage() {
     const searchParams = useSearchParams()
     const status = searchParams?.get('status')
 
