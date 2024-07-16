@@ -18,21 +18,23 @@ export default async function Page() {
     return <div className="h-dvh">
         <SessionProvider>
             <TitleBar />
-            <div className="w-full">
-                <Suspense fallback={<SkeletonTable cols={9} />}>
-                    <QuotesTable data={data as RichQuote[]} onTableInvalid={async () => {
-                        "use server"
-                        api.get.richquotes()
-                            .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
-                    }} />
-                    <ScrollToTop />
-                    <Reload onClick={async () => {
-                        "use server"
-                        api.get.richquotes()
-                            .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
-                    }} />
-                </Suspense>
-            </div>
+            <ShowOnLogin adminOnly={true}>
+                <div className="w-full">
+                    <Suspense fallback={<SkeletonTable cols={9} />}>
+                        <QuotesTable data={data as RichQuote[]} onTableInvalid={async () => {
+                            "use server"
+                            api.get.richquotes()
+                                .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
+                        }} />
+                        <ScrollToTop />
+                        <Reload onClick={async () => {
+                            "use server"
+                            api.get.richquotes()
+                                .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
+                        }} />
+                    </Suspense>
+                </div>
+            </ShowOnLogin>
 
         </SessionProvider>
         <div className="flex items-center justify-center" style={{ height: "-webkit-fill-available" }}>
