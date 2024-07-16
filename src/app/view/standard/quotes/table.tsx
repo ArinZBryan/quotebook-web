@@ -172,7 +172,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Message Date</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
                                 setSortOptions({ sort: v.direction, col: "message_date" });
                                 toast({
                                     description: `Sorted into ${v.direction} order by message date`,
