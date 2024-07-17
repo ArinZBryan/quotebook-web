@@ -134,7 +134,8 @@ export const unverified_quotes = sqliteTable("unverified_quotes", {
     id: integer("id")
         .primaryKey(),
     content: text("content"),
-    message_id: text("message_id")
+    message_id: text("message_id"),
+    message_date: text("message_date")
 })
 
 export const db_tables = {
