@@ -19,10 +19,10 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
     navigationMenuTriggerStyle,
-  } from "@/components/ui/navigation-menu"  
+} from "@/components/ui/navigation-menu"
 import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
-import { LayoutDashboardIcon, LogOut, PieChartIcon, TableIcon, WrenchIcon } from "lucide-react"
+import { BlocksIcon, LayoutDashboardIcon, LogOut, PieChartIcon, TableIcon, WrenchIcon } from "lucide-react"
 import React from "react"
 export function TitleBar() {
 
@@ -41,25 +41,25 @@ export function TitleBar() {
             <div className="" />
             {!hidePages ?
                 (<div className="flex flex-row overflow-visible">
-                    <div className="hidden sm:pr-5 sm:block">
-                        <NavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
+                    <div className="hidden md:pr-5 md:block">
+                        <NavButtons userIsAdmin={session?.user.admin == "true" ? true : false} />
                     </div>
-                    <div className="sm:hidden">
-                      <CondensedNavButtons userIsAdmin={session?.user.admin == "true" ? true : false}/>
+                    <div className="md:hidden">
+                        <CondensedNavButtons userIsAdmin={session?.user.admin == "true" ? true : false} />
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                                <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid"/>
+                            <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="max-w-[13rem]">
                             <DropdownMenuLabel>Logged in as {session?.user?.name}</DropdownMenuLabel>
                             <DropdownMenuSeparator></DropdownMenuSeparator>
                             <DropdownMenuItem>
-                              <Link href="/settings" className="w-full flex flex-row">
-                                <WrenchIcon className="mr-2 h-4 w-4"/>Settings
-                              </Link>
+                                <Link href="/settings" className="w-full flex flex-row">
+                                    <WrenchIcon className="mr-2 h-4 w-4" />Settings
+                                </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {signOut({callbackUrl:"/"})}}>
+                            <DropdownMenuItem onClick={() => { signOut({ callbackUrl: "/" }) }}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 <span>Log Out</span>
                             </DropdownMenuItem>
@@ -73,119 +73,149 @@ export function TitleBar() {
     )
 }
 
-function NavButtons({ userIsAdmin } : { userIsAdmin: boolean}) {
+function NavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
     return (<NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Table View</NavigationMenuTrigger>
-            <NavigationMenuContent className="z-[20]">
-            <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
-              <ListItem href={ userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
-                { userIsAdmin ? "Edit and View" : "View"} All Authors 
-              </ListItem>
-              <ListItem href={ userIsAdmin ? "/view/admin/tags" : "/view/standard/tags"} title="Tags">
-                { userIsAdmin ? "Edit and View" : "View"} All Tags
-              </ListItem>
-              <ListItem href={ userIsAdmin ? "/view/admin/quotes" : "/view/standard/quotes"} title="Quotes">
-                { userIsAdmin ? "Edit and View" : "View"} All Quotes
-              </ListItem>
-            </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Statistics</NavigationMenuTrigger>
-            <NavigationMenuContent className="z-[20]">
-            <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
-              <ListItem href="/stats/authors" title="Authors">
-                View Statitics for Authors 
-              </ListItem>
-              <ListItem href="/stats/tags" title="Tags">
-                View Statistics for Tags
-              </ListItem>
-            </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Dashboard
-            </NavigationMenuLink>
-          </Link>
-          </NavigationMenuItem>
+            {!userIsAdmin ? null :
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger>Admin Functions</NavigationMenuTrigger>
+                    <NavigationMenuContent className="z-[20]">
+                        <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                            <ListItem href={"/admin/unverified"} title="Unverified Quotes">
+                                Audit Unverified Quotes
+                            </ListItem>
+                            <ListItem href={"/admin/users"} title="Edit Users">
+                                Edit / Add Users
+                            </ListItem>
+                        </ul>
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
+            }
+            <NavigationMenuItem>
+                <NavigationMenuTrigger>Table View</NavigationMenuTrigger>
+                <NavigationMenuContent className="z-[20]">
+                    <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                        <ListItem href={userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
+                            {userIsAdmin ? "Edit and View" : "View"} All Authors
+                        </ListItem>
+                        <ListItem href={userIsAdmin ? "/view/admin/tags" : "/view/standard/tags"} title="Tags">
+                            {userIsAdmin ? "Edit and View" : "View"} All Tags
+                        </ListItem>
+                        <ListItem href={userIsAdmin ? "/view/admin/quotes" : "/view/standard/quotes"} title="Quotes">
+                            {userIsAdmin ? "Edit and View" : "View"} All Quotes
+                        </ListItem>
+                    </ul>
+                </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+                <NavigationMenuTrigger>Statistics</NavigationMenuTrigger>
+                <NavigationMenuContent className="z-[20]">
+                    <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                        <ListItem href="/stats/authors" title="Authors">
+                            View Statitics for Authors
+                        </ListItem>
+                        <ListItem href="/stats/tags" title="Tags">
+                            View Statistics for Tags
+                        </ListItem>
+                    </ul>
+                </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        Dashboard
+                    </NavigationMenuLink>
+                </Link>
+            </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
-      )
+    </NavigationMenu>
+    )
 }
 
-function CondensedNavButtons({ userIsAdmin } : { userIsAdmin: boolean}) {
-  return (<NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger><TableIcon/></NavigationMenuTrigger>
-          <NavigationMenuContent className="z-[20]">
-          <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
-            <ListItem href={ userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
-              { userIsAdmin ? "Edit and View" : "View"} All Authors 
-            </ListItem>
-            <ListItem href={ userIsAdmin ? "/view/admin/tags" : "/view/standard/tags"} title="Tags">
-              { userIsAdmin ? "Edit and View" : "View"} All Tags
-            </ListItem>
-            <ListItem href={ userIsAdmin ? "/view/admin/quotes" : "/view/standard/quotes"} title="Quotes">
-              { userIsAdmin ? "Edit and View" : "View"} All Quotes
-            </ListItem>
-          </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger><PieChartIcon/></NavigationMenuTrigger>
-          <NavigationMenuContent className="z-[20]">
-          <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
-            <ListItem href="/stats/authors" title="Authors">
-              View Statitics for Authors 
-            </ListItem>
-            <ListItem href="/stats/tags" title="Tags">
-              View Statistics for Tags
-            </ListItem>
-          </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-        <Link href="/" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <LayoutDashboardIcon/>
-          </NavigationMenuLink>
-        </Link>
-        </NavigationMenuItem>
-      </NavigationMenuList>
+function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
+    return (<NavigationMenu>
+        <NavigationMenuList>
+            {!userIsAdmin ? null :
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger><BlocksIcon /></NavigationMenuTrigger>
+                    <NavigationMenuContent className="z-[20]">
+                        <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                            <ListItem href={"/admin/unverified"} title="Unverified Quotes">
+                                Audit Unverified Quotes
+                            </ListItem>
+                            <ListItem href={"/admin/users"} title="Edit Users">
+                                Edit / Add Users
+                            </ListItem>
+                        </ul>
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
+            }
+            <NavigationMenuItem>
+                <NavigationMenuTrigger><TableIcon /></NavigationMenuTrigger>
+                <NavigationMenuContent className="z-[20]">
+                    <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                        <ListItem href={userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
+                            {userIsAdmin ? "Edit and View" : "View"} All Authors
+                        </ListItem>
+                        <ListItem href={userIsAdmin ? "/view/admin/tags" : "/view/standard/tags"} title="Tags">
+                            {userIsAdmin ? "Edit and View" : "View"} All Tags
+                        </ListItem>
+                        <ListItem href={userIsAdmin ? "/view/admin/quotes" : "/view/standard/quotes"} title="Quotes">
+                            {userIsAdmin ? "Edit and View" : "View"} All Quotes
+                        </ListItem>
+                    </ul>
+                </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+                <NavigationMenuTrigger><PieChartIcon /></NavigationMenuTrigger>
+                <NavigationMenuContent className="z-[20]">
+                    <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
+                        <ListItem href="/stats/authors" title="Authors">
+                            View Statitics for Authors
+                        </ListItem>
+                        <ListItem href="/stats/tags" title="Tags">
+                            View Statistics for Tags
+                        </ListItem>
+                    </ul>
+                </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        <LayoutDashboardIcon />
+                    </NavigationMenuLink>
+                </Link>
+            </NavigationMenuItem>
+        </NavigationMenuList>
     </NavigationMenu>
     )
 }
 
 const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
+    React.ElementRef<"a">,
+    React.ComponentPropsWithoutRef<"a">
 >(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gradient-to-br from-gray-900 to-gray-950"
-            }
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  )
+    return (
+        <li>
+            <NavigationMenuLink asChild>
+                <a
+                    ref={ref}
+                    className={
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gradient-to-br from-gray-900 to-gray-950"
+                    }
+                    {...props}
+                >
+                    <div className="text-sm font-medium leading-none">{title}</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        {children}
+                    </p>
+                </a>
+            </NavigationMenuLink>
+        </li>
+    )
 })
 
-function LayoutIcon(props : any) {
+function LayoutIcon(props: any) {
     return (
         <svg
             {...props}
@@ -207,7 +237,7 @@ function LayoutIcon(props : any) {
 }
 
 
-function MessageCircleIcon(props : any) {
+function MessageCircleIcon(props: any) {
     return (
         <svg
             {...props}
@@ -227,7 +257,7 @@ function MessageCircleIcon(props : any) {
 }
 
 
-function SearchIcon(props : any) {
+function SearchIcon(props: any) {
     return (
         <svg
             {...props}
@@ -248,7 +278,7 @@ function SearchIcon(props : any) {
 }
 
 
-function UsersIcon(props : any) {
+function UsersIcon(props: any) {
     return (
         <svg
             {...props}
