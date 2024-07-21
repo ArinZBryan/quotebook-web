@@ -1,3 +1,4 @@
+"use server"
 import { Author } from "../../types";
 import { db, db_tables } from "@/schema";
 

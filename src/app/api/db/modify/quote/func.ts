@@ -1,16 +1,13 @@
-import { Tag } from "../../types"
+"use server"
+import { Tag, Author } from "../../types"
 
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 
 export async function respond(newData: formData) {
-    "use server"
     const tagvalues = newData.tags.map((t) => {return {tag: t.id, quote: newData.id}})
 
-    const authors = await db.select({ id: db_tables.authors.id })
-        .from(db_tables.authors)
-        .where(eq(db_tables.authors.tag, newData.author?.id!))
 
     await db.update(db_tables.quotes)
         .set({
@@ -18,7 +15,7 @@ export async function respond(newData: formData) {
             quote: newData.quote,
             date: newData.date,
             confirmed_date: 'true',
-            author:authors[0].id
+            author:newData.author!.id
         })
         .where(eq(db_tables.quotes.id, newData.id))
 
@@ -37,6 +34,6 @@ type formData = {
     'preamble': string,
     'quote': string,
     'date': string,
-    'author': Tag | null,
+    'author': Author,
     'tags': Tag[]
 }

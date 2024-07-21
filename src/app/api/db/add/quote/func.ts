@@ -1,7 +1,9 @@
+"use server"
 import { RichQuote } from "../../types";
 import { db, db_tables } from "@/schema";
 
 export async function respond(quote: RichQuote) {
+    console.log(quote); return;
     const quote_id = (await db.insert(db_tables.quotes)
         .values({
             'preamble':quote.preamble,

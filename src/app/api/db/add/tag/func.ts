@@ -1,3 +1,4 @@
+"use server"
 import { Tag } from "../../types";
 import { db, db_tables } from "@/schema";
 

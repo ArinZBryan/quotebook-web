@@ -1,9 +1,9 @@
+"use server"
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 export async function getLinkedUser(args : { author_id : number | null } ): Promise<{ name: string | null, image: string | null }>
 {
-    "use server"
     const author_id = args.author_id
     if (author_id == null) { return { name: null, image: null } }
 
