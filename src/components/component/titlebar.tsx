@@ -87,6 +87,9 @@ function NavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                             <ListItem href={"/admin/users"} title="Edit Users">
                                 Edit / Add Users
                             </ListItem>
+                            <ListItem href={"/admin/delete"} title="Remove Tags / Authors">
+                                Clean Up Unused Tags And Authors
+                            </ListItem>
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -145,6 +148,9 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                             </ListItem>
                             <ListItem href={"/admin/users"} title="Edit Users">
                                 Edit / Add Users
+                            </ListItem>
+                            <ListItem href={"/admin/delete"} title="Remove Tags/Authors">
+                                Remove Tags / Authors
                             </ListItem>
                         </ul>
                     </NavigationMenuContent>

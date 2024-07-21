@@ -9,7 +9,7 @@ export async function GET() {
         return res;
     }
     else {
-        let ret = await api.get.tags()
+        let ret = await api.get.unverifiedquotes()
         const res = NextResponse.json(ret);
         return res;
     }
