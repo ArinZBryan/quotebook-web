@@ -17,20 +17,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { AuthorSelector } from "@/components/component/tag-selector";
 
-export function SelectAuthor({ defaultData, formSubmit }: { defaultData: Author | null, formSubmit: (formResult: Author | null) => void }) {
+export function SelectAuthor({ defaultData, formSubmit, authors }: { defaultData: Author | null, formSubmit: (formResult: Author | null) => void, authors: Author[] }) {
 
-    const [authorData, setAuthorData] = useState<Author[]>([])
-    const [sortedAuthors, setSortedAuthors] = useState<Author[]>([])
     const [formData, setFormData] = useState<Author | null>(defaultData)
-
-    useEffect(() => {
-        fetch(`/api/db/get/authors`)
-            .then((res) => res.json())
-            .then((data) => {
-                setAuthorData(data)
-            })
-    }, [])
 
     return (
         <Dialog>
@@ -44,26 +35,7 @@ export function SelectAuthor({ defaultData, formSubmit }: { defaultData: Author 
                     <DialogTitle>Select Author</DialogTitle>
                     <DialogDescription>Select an author to view statistics on</DialogDescription>
                 </DialogHeader>
-                <Label htmlFor="author">Author</Label>
-                <Input type="search" id="author" onInput={(e) => {
-                    const fuse = new Fuse(authorData, { keys: ['preferred_name', 'search_text'], threshold: 0.2, ignoreLocation: true, isCaseSensitive: false });
-                    setSortedAuthors(fuse.search(e.currentTarget.value).map((r) => r.item))
-                }} />
-                {
-                    sortedAuthors.length > 1 || formData != null ?
-                        <ScrollArea className="max-h-40 min-h-10 border-gray-800 border-2 rounded-md p-1">
-                            {
-                                formData == null ? sortedAuthors.map((a, i) =>
-                                    <div className="m-1" key={i}>
-                                        <AuthorTagAdmin author={a} onAdd={(a) => setFormData(a)} onRemove={(a) => { setFormData(null) }} startState="pin" />
-                                    </div>
-                                ) :
-                                    <div className="m-1">
-                                        <AuthorTagAdmin author={formData} onAdd={(a) => setFormData(a)} onRemove={(a) => { setFormData(null) }} startState="unpin" />
-                                    </div>
-                            }
-                        </ScrollArea> : ""
-                }
+                <AuthorSelector showLabel={true} sourceAuthors={authors} onSelectedAuthorChanged={(a) => setFormData(a)} />
                 <DialogClose>
                     <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC]" onClick={() => {
                         formSubmit(formData)

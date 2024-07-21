@@ -51,7 +51,7 @@ export function InteractivePage(props: { rich_quotes: RichQuote[], authors: Auth
         <Grid cols={4} rows={2} gap={1} >
             <GridElement className='text-3xl flex' pos={{ width: 4, height: 1, row: 0, column: 0 }}>
                 <div className='pb-2'>Stats on:</div>
-                <SelectAuthor defaultData={selectedAuthor} formSubmit={(a) => { setSelectedAuthor(a) }} />
+                <SelectAuthor defaultData={selectedAuthor} formSubmit={(a) => { setSelectedAuthor(a) }} authors={props.authors}/>
             </GridElement>
             {
                 selectedAuthor != null && data != null ?

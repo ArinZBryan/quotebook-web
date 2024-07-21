@@ -1,8 +1,8 @@
+"use server"
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 export async function respond(newData: formData) {
-    "use server"
     db.update(db_tables.tags)
         .set({
             title: newData.title,

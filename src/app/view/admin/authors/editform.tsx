@@ -1,13 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RichQuote, Author, Tag } from "@/app/api/db/types";
+import { Author, Tag } from "@/app/api/db/types";
 import { useEffect, useState } from "react";
-import { TagAdmin, TagStd } from "@/components/component/tag";
-import Fuse from 'fuse.js'
 import { Button } from "@/components/ui/button";
-import { routeModule } from "next/dist/build/templates/app-page";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,6 +15,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { TagSelectorSingle } from "@/components/component/tag-selector";
 
 
 
@@ -57,26 +54,7 @@ export function EditForm({ rowData }: { rowData: Author }) {
         <Label htmlFor="preferred_name">Preferred Name</Label>
         <Input id="preferred_name" placeholder={rowData.preferred_name} />
         <Label htmlFor="tag">Author Tag{showWarnings ? <span className="text-red-500 ml-4">Tag is REQUIRED</span> : ""}</Label>
-
-        <Input type="search" id="tag" onInput={(e) => {
-            const fuse = new Fuse(tagData, { keys: ['title'], threshold: 0.5, ignoreLocation: true, isCaseSensitive: false });
-            setSortedTags(fuse.search(e.currentTarget.value).map((r) => r.item))
-        }} />
-        {
-            sortedTags.length > 1 || formData.tag != null ?
-                <ScrollArea className="max-h-40 min-h-10 border-gray-800 border-2 rounded-md p-1">
-                    {
-                        formData.tag == null ? sortedTags.map((tag, i) =>
-                            <div className="m-1" key={i}>
-                                <TagAdmin tag={tag} onAdd={(t) => setFormData({ ...formData, 'tag': t })} onRemove={(tag) => { setFormData({ ...formData, 'tag': null }) }} startState="pin" />
-                            </div>
-                        ) :
-                            <div className="m-1">
-                                <TagAdmin tag={formData.tag} onAdd={(t) => setFormData({ ...formData, tag: t })} onRemove={(tag) => { setFormData({ ...formData, tag: null }) }} startState="unpin" />
-                            </div>
-                    }
-                </ScrollArea> : ""
-        }
+        <TagSelectorSingle showLabel={false} sourceTags={tagData} onSelectedTagChanged={(t) => {setFormData({...formData, 'tag' : t})}} />
         <Label htmlFor="tag">Search Text</Label>
         <Input type="text" id="tag" onKeyDown={(e) => {
             if (e.key == 'Enter') setFormData({ ...formData, 'search_text': formData.search_text.concat([e.currentTarget.value]) })

@@ -1,11 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { RichQuote, Author, Tag } from "@/app/api/db/types";
+import { Tag } from "@/app/api/db/types";
 import { useEffect, useState } from "react";
-import { TagAdmin, TagStd } from "@/components/component/tag";
-import Fuse from 'fuse.js'
 import { Button } from "@/components/ui/button";
 import {
     Select,
