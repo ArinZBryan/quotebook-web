@@ -2,7 +2,7 @@
 import { Tag } from "../../types";
 import { db, db_tables } from "@/schema";
 
-export async function respond(tag: Tag) {
+export async function respond(tag: Omit<Tag, "id">) {
     const id = await db.insert(db_tables.tags)
         .values({
             'category' : tag.category,

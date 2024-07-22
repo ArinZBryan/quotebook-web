@@ -2,8 +2,7 @@
 import { RichQuote } from "../../types";
 import { db, db_tables } from "@/schema";
 
-export async function respond(quote: RichQuote) {
-    console.log(quote); return;
+export async function respond(quote: Omit<RichQuote, "id" | "confirmed_date">) {
     const quote_id = (await db.insert(db_tables.quotes)
         .values({
             'preamble':quote.preamble,

@@ -2,7 +2,7 @@
 import { Author } from "../../types";
 import { db, db_tables } from "@/schema";
 
-export async function respond(author: Author) {
+export async function respond(author: Omit<Author, "id">) {
     const id = await db.insert(db_tables.authors)
         .values({
             preferred_name: author.preferred_name,
