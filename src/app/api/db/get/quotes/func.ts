@@ -1,9 +1,9 @@
+"use server"
 import { Quote } from "../../types"
 import { db, db_tables } from '@/schema'
 
 export async function getQuotesRaw(limit?: number): Promise<Quote[]>
 {
-    "use server"
     let lim = -1;
     if (limit != undefined && limit > 0) { lim = limit; }
 

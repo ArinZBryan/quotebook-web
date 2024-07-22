@@ -1,3 +1,4 @@
+"use server"
 import { RichQuote, Tag } from "@/app/api/db/types"
 import { db, db_tables } from '@/schema'
 import { sql, eq } from 'drizzle-orm'

@@ -15,7 +15,7 @@ const colours = {
 
 const tagCutoff = 25
 
-export function TagStd({tag, overrideColor}: {tag: Tag, overrideColor? : string}) : JSX.Element
+export function TagStd({tag, overrideColor, className}: {tag: Tag, overrideColor? : string, className? : string}) : JSX.Element
 {
     let tagText = `${tag.category}:${tag.title}`
     if (!(tag.title == undefined || tag.category == undefined)) {
@@ -33,7 +33,7 @@ export function TagStd({tag, overrideColor}: {tag: Tag, overrideColor? : string}
     
     return (
         <HoverCard>
-            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 hover:`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 ${className}`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
                 {tagText}
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
@@ -48,7 +48,14 @@ export function TagStd({tag, overrideColor}: {tag: Tag, overrideColor? : string}
     )
 }
 
-export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {tag: Tag, onRemove: (tagRemoved : Tag) => void, onAdd: (tagAdded: Tag) => void, overrideColor? : string, startState?: "pin" | "unpin" }) : JSX.Element
+export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState, className }: {
+    tag: Tag, 
+    onRemove: (tagRemoved : Tag) => void, 
+    onAdd: (tagAdded: Tag) => void, 
+    overrideColor? : string, 
+    startState?: "pin" | "unpin",
+    className?: string
+}) : JSX.Element
 {   
     let title = tag.title;
     let category = tag.category
@@ -68,14 +75,14 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {ta
     const [controlState, setControlState] = React.useState(startState)
     return (
         <HoverCard>
-            <HoverCardTrigger className="rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <HoverCardTrigger className={`rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit ${className}`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
             <span onMouseEnter={() => setDeleteHidden(false)} onMouseLeave={() => setDeleteHidden(true)} className="flex flex-row w-fit">
                 {tagText}
                 {
                     !controlHidden ? 
                         (controlState == "pin" ? 
-                            <PinIcon onClick={() => {setControlState("unpin"); onAdd(tag)}} /> : 
-                            <PinOffIcon onClick={() => {setControlState("pin"); onRemove(tag)}} />
+                            <PinIcon onClick={() => {setControlState("unpin");onAdd(tag)}} /> : 
+                            <PinOffIcon onClick={() => {setControlState("pin");onRemove(tag)}} />
                         ) : ""
                 }
                 </span>
@@ -94,7 +101,7 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState }: {ta
     )
 }
 
-export function AuthorTagStd({author, overrideColor}: {author?: Author, overrideColor? : string}) : JSX.Element
+export function AuthorTagStd({author, overrideColor, className}: {author?: Author, overrideColor? : string, className?: string}) : JSX.Element
 {
     let tag : Tag | null = null;
     if (author == undefined) {
@@ -119,7 +126,7 @@ export function AuthorTagStd({author, overrideColor}: {author?: Author, override
     
     return (
         <HoverCard>
-            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 hover:`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <HoverCardTrigger className={`rounded-full w-fit p-1 pl-3 pr-3 text-black m-1 ${className}`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
                 {tagText}
             </HoverCardTrigger>
             <HoverCardContent className="w-fit">
@@ -134,8 +141,14 @@ export function AuthorTagStd({author, overrideColor}: {author?: Author, override
     )
 }
 
-export function AuthorTagAdmin({author, onRemove, onAdd, overrideColor, startState }: {author: Author, onRemove: (authorRemoved : Author) => void, onAdd: (authorAdded: Author) => void, overrideColor? : string, startState?: "pin" | "unpin" }) : JSX.Element
-{   
+export function AuthorTagAdmin({author, onRemove, onAdd, overrideColor, startState, className }: {
+    author: Author, 
+    onRemove: (authorRemoved : Author) => void, 
+    onAdd: (authorAdded: Author) => void, 
+    overrideColor? : string, 
+    startState?: "pin" | "unpin",
+    className? : string
+}) : JSX.Element {   
     const tag = author.tag;
     let title = tag.title;
     let category = "Author"
@@ -148,7 +161,7 @@ export function AuthorTagAdmin({author, onRemove, onAdd, overrideColor, startSta
     const [controlState, setControlState] = React.useState(startState)
     return (
         <HoverCard>
-            <HoverCardTrigger className="rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit" style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
+            <HoverCardTrigger className={`rounded-full p-1 pl-3 pr-3 text-black m-1 flex w-fit ${className}`} style={{backgroundColor:`#${overrideColor == undefined ? colours[tag.category as keyof typeof colours] : overrideColor}`}}>
             <span onMouseEnter={() => setDeleteHidden(false)} onMouseLeave={() => setDeleteHidden(true)} className="flex flex-row w-fit">
                 {tagText}
                 {

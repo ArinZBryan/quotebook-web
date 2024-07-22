@@ -1,12 +1,7 @@
 "use client"
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { RichQuote, Author, Tag } from "@/app/api/db/types";
-import { useEffect, useState } from "react";
-import { AuthorTagAdmin, TagAdmin, TagStd } from "@/components/component/tag";
-import Fuse from 'fuse.js'
+import { Tag } from "@/app/api/db/types";
+import { useState } from "react";
+import { TagStd } from "@/components/component/tag";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -17,20 +12,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { TagSelectorSingle } from "@/components/component/tag-selector";
 
-export function SelectTag({ defaultData, formSubmit }: { defaultData: Tag | null, formSubmit: (formResult: Tag | null) => void }) {
+export function SelectTag({ defaultData, formSubmit, tags }: { defaultData: Tag | null, formSubmit: (formResult: Tag | null) => void, tags: Tag[] }) {
 
-    const [tagData, setTagData] = useState<Tag[]>([])
-    const [sortedTags, setSortedTags] = useState<Tag[]>([])
     const [formData, setFormData] = useState<Tag | null>(defaultData)
-
-    useEffect(() => {
-        fetch(`/api/db/get/tags`)
-            .then((res) => res.json())
-            .then((data) => {
-                setTagData(data)
-            })
-    }, [])
 
     return (
         <Dialog>
@@ -45,26 +31,7 @@ export function SelectTag({ defaultData, formSubmit }: { defaultData: Tag | null
                     <DialogTitle>Select Tag</DialogTitle>
                     <DialogDescription>Select a tag to view statistics for</DialogDescription>
                 </DialogHeader>
-                <Label htmlFor="tag">Tag</Label>
-                <Input type="search" id="tag" onInput={(e) => {
-                    const fuse = new Fuse(tagData, { keys: ['title'], threshold: 0.2, ignoreLocation: true, isCaseSensitive: false });
-                    setSortedTags(fuse.search(e.currentTarget.value).map((r) => r.item))
-                }} />
-                {
-                    sortedTags.length > 1 || formData != null ?
-                        <ScrollArea className="max-h-40 min-h-10 border-gray-800 border-2 rounded-md p-1">
-                            {
-                                formData == null ? sortedTags.map((a, i) =>
-                                    <div className="m-1" key={i}>
-                                        <TagAdmin tag={a} onAdd={(a) => setFormData(a)} onRemove={(a) => { setFormData(null) }} startState="pin" />
-                                    </div>
-                                ) :
-                                    <div className="m-1">
-                                        <TagAdmin tag={formData} onAdd={(a) => setFormData(a)} onRemove={(a) => { setFormData(null) }} startState="unpin" />
-                                    </div>
-                            }
-                        </ScrollArea> : ""
-                }
+                <TagSelectorSingle showLabel={true} sourceTags={tags} onSelectedTagChanged={(t) => {setFormData(t)}} />
                 <DialogClose>
                     <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC]" onClick={() => {
                         formSubmit(formData)

@@ -1,9 +1,9 @@
+"use server"
 import { Tag } from "../../types"
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 export async function respond(newData: formData) {
-    "use server"
     db.update(db_tables.authors)
         .set({
             preferred_name: newData.preferred_name,

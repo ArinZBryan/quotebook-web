@@ -1,10 +1,10 @@
+"use server"
 import { Tag, Author } from "../../types"
 
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 export async function getUserData(author_id: number | null): Promise<Author | null> {
-    "use server"
     if (author_id == null || author_id == undefined) { return null }
     const unprocessed = (await db.select()
         .from(db_tables.authors)

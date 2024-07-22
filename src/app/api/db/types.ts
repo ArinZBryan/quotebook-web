@@ -33,3 +33,10 @@ export type RichQuote = {
     message_date: string,
     tags: Tag[]
 }
+
+export type UnverifiedQuote = {
+    id: number,
+    content: string,
+    message_id: string,
+    message_date: string,
+}

@@ -1,10 +1,10 @@
+"use server"
 import { Author } from "../../types"
 import { db, db_tables } from '@/schema'
 import { eq } from 'drizzle-orm'
 
 export async function getAuthors(limit?: number): Promise<Author[]>
 {
-    "use server"
     let lim = -1;
     if (limit != undefined && limit > 0) { lim = limit; }
 
