@@ -15,7 +15,6 @@ import { getUnverifiedQuotes as get_unverifedquotes } from "./app/api/db/get/unv
 import { respond as add_author } from "@/app/api/db/add/author/func"
 import { respond as add_quote } from "@/app/api/db/add/quote/func"
 import { respond as add_tag } from "@/app/api/db/add/tag/func"
-import { DiscordBot } from "./app/api/discord/func";
 import { redirect } from "next/navigation";
 
 export const api = {
@@ -48,20 +47,6 @@ export const api = {
         quote: add_quote,
         tag: add_tag
     },
-    discord: (automatically_update_search_text: boolean, clear_tables: boolean, run_migrations: boolean ) => {
-        const bot = new DiscordBot({
-            'automatically_update_search_text': automatically_update_search_text,
-            'clear_tables': clear_tables,
-            'discord_options': {
-                'application_id': process.env.DISCORD_APPLICATION_ID!,
-                'source_channel': process.env.DISCORD_SOURCE_CHANNEL!,
-                'token': process.env.DISCORD_TOKEN!
-            },
-            'migrations_folder': process.env.DRIZZLE_MIGRATIONS!,
-            'run_migrations': run_migrations
-        })
-        return bot.gatherQuotes()
-    }
 }
 
 export function triggerServerSideReload(url:string) {
