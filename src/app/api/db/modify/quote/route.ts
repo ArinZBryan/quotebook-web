@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth"
-import { Tag } from "../../types"
+import { Tag , Author} from "../../types"
 import { api } from "@/api";
 
 export async function POST(req : Request) {
@@ -15,7 +15,16 @@ export async function POST(req : Request) {
             'preamble': '',
             'quote': '',
             'date': '',
-            'author': null,
+            'author': {
+                'id': -1,
+                'preferred_name': "Placeholder",
+                'search_text' : "",
+                'tag' : {
+                    'id' : -1,
+                    'category' : 'Miscellaneous',
+                    'title': "Placeholder"
+                }
+            } as Author,
             'tags': []
         }
         try {
@@ -32,6 +41,6 @@ type formData = {
     'preamble': string,
     'quote': string,
     'date': string,
-    'author': Tag | null,
+    'author': Author,
     'tags': Tag[]
 }
