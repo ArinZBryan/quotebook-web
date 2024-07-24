@@ -40,3 +40,13 @@ export type UnverifiedQuote = {
     message_id: string,
     message_date: string,
 }
+
+export type RichUser =  {
+    id: string;
+    name: string | null;
+    email: string;
+    emailVerified: Date | null;
+    image: string | null;
+    admin: boolean;
+    linked_author: Author | null;
+}

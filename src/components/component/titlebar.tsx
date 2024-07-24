@@ -24,6 +24,7 @@ import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { BlocksIcon, LayoutDashboardIcon, LogOut, PieChartIcon, TableIcon, WrenchIcon } from "lucide-react"
 import React from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 export function TitleBar() {
 
     var hidePages = true;
@@ -49,7 +50,10 @@ export function TitleBar() {
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Image src={session?.user?.image!} alt={"You"} width={40} height={40} className="rounded-full cursor-pointer ml-5 w-15 h-15 hover:border-white border-transparent border-[3px] border-solid" />
+                            <Avatar className="ml-5 cursor-pointer hover:border-white border-transparent border-[3px] border-solid">
+                                <AvatarImage src={session?.user.image ?? undefined}/>
+                                <AvatarFallback>{session?.user.name?.split(" ").map((v) => v[0]).reduce((p, c) => p + c, "")}</AvatarFallback>
+                            </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="max-w-[13rem]">
                             <DropdownMenuLabel>Logged in as {session?.user?.name}</DropdownMenuLabel>
