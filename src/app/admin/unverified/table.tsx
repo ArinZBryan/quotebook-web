@@ -5,17 +5,17 @@ import {
     ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { Toaster } from "@/components/ui/toaster";
-import { Author, UnverifedQuote } from "@/app/api/db/types";
+import { Author, UnverifiedQuote } from "@/app/api/db/types";
 
 import { useEffect, useRef, useState } from 'react'
 import { useToast } from "@/components/ui/use-toast";
 import { TagStd } from "@/components/component/tag";
 
 
-export function Table({ data, onItemSelected }: { data: UnverifedQuote[], onItemSelected: (selectedQuote:UnverifedQuote)=>void }) {
+export function Table({ data, onItemSelected }: { data: UnverifiedQuote[], onItemSelected: (selectedQuote:UnverifiedQuote)=>void }) {
 
     const std_width = 25
-    const [colWidths, setColWidths] = useState<{ [T in keyof UnverifedQuote]: number }>({ 
+    const [colWidths, setColWidths] = useState<{ [T in keyof UnverifiedQuote]: number }>({ 
         'id': std_width * 2/10, 
         'content': std_width * 26/10, 
         'message_id': std_width * 7/10,
@@ -34,7 +34,7 @@ export function Table({ data, onItemSelected }: { data: UnverifedQuote[], onItem
         }
     }, [elementRef]);
 
-    function setColWidthsW(key: keyof UnverifedQuote, s: number) {
+    function setColWidthsW(key: keyof UnverifiedQuote, s: number) {
         setColWidths(prevState => {
             const newObj = { ...prevState };
             newObj[key] = s;
@@ -89,7 +89,7 @@ export function Table({ data, onItemSelected }: { data: UnverifedQuote[], onItem
         </>
     )
 }
-function TableRow<T extends Partial<UnverifedQuote>>({ rowData, colWidths }: { rowData: T, colWidths: { [K in keyof T]: number }}) {
+function TableRow<T extends Partial<UnverifiedQuote>>({ rowData, colWidths }: { rowData: T, colWidths: { [K in keyof T]: number }}) {
 
     return (
         <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent">
