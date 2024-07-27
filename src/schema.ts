@@ -22,6 +22,15 @@ export const users = sqliteTable("user", {
     .references(() => authors.id)
 })
  
+export const whitelisted_users = sqliteTable("whitelistedUsers", {
+    id: integer("id").primaryKey(),
+    discord_id: text("discordID").notNull(),
+    make_admin: text("makeAdmin").default("false").notNull(),
+    linked_author: integer("linkedAuthor")
+        .references(() => authors.id)
+})
+
+
 export const accounts = sqliteTable(
   "account",
   {
@@ -148,5 +157,6 @@ export const db_tables = {
   authors: authors,
   quotes: quotes,
   tag_instances: tag_instances,
-  unverified_quotes: unverified_quotes
+  unverified_quotes: unverified_quotes,
+  whitelisted_users: whitelisted_users,
 }
