@@ -104,13 +104,9 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         });
     }
 
-    const memoizedData = useMemo(() => {
+    const selectedData = useMemo(() => {
         return data.filter(containsFunction(filteroptions)).sort(sortFunction(sortoptions));
     }, [data, filteroptions, sortoptions]);
-
-    const selectedData = useMemo(() => {
-        return memoizedData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[])));
-    }, [memoizedData]);
 
     return (
         <>
@@ -244,7 +240,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                 </ResizablePanelGroup>
                 {selectedData.map((v, i) =>
                     <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                        <TableRow rowData={v} colWidths={colWidths} formData={memoizedData[i]} onEditClose={() => onTableInvalid()} />
+                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()} />
                     </div>
                 )}
             </div>

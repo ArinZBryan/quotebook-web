@@ -8,6 +8,7 @@ import { Table as QuotesTable } from "./table"
 import { SkeletonTable } from "./skeleton-table"
 import { Reload } from "@/components/component/reload"
 import { api, triggerServerSideReload } from "@/api"
+import { InteractivePage } from "./client"
 export default async function Page() {
 
     let data: RichQuote[] = []
@@ -20,19 +21,7 @@ export default async function Page() {
             <TitleBar />
             <ShowOnLogin adminOnly={true}>
                 <div className="w-full">
-                    <Suspense fallback={<SkeletonTable cols={9} />}>
-                        <QuotesTable data={data as RichQuote[]} onTableInvalid={async () => {
-                            "use server"
-                            api.get.richquotes()
-                                .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
-                        }} />
-                        <ScrollToTop />
-                        <Reload onClick={async () => {
-                            "use server"
-                            api.get.richquotes()
-                                .then((res) => { data = res; triggerServerSideReload("/view/admin/quotes") })
-                        }} />
-                    </Suspense>
+                    <InteractivePage/>
                 </div>
             </ShowOnLogin>
 
