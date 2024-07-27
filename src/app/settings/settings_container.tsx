@@ -55,7 +55,16 @@ export async function SettingsContainer() {
         {
             linked_author != null && linked_author != undefined ? 
             <div>
-                <div className=""><Form defaultData={linked_author.preferred_name} onFormSubmit={async (res) => {"use server"; api.modify.usersettings.update_linked_author(linked_author, res); redirect(`/settings?${Math.random()}`)}}/></div>
+                <div className="">
+                    <Form 
+                        defaultData={linked_author.preferred_name} 
+                        onFormSubmit={async (res) => {
+                            "use server"; 
+                            api.modify.usersettings.update_linked_author(linked_author, res); 
+                            redirect(`/settings?${Math.random()}`)
+                        }}
+                    />
+                    </div>
             </div>
             : ""
         }
