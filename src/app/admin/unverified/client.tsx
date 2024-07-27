@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { api } from "@/api";
 import { AuthorSelector, TagSelector } from "@/components/component/tag-selector";
+import clearCachesByServerAction from "@/lib/revalidate";
 
 
 export function InteractivePage({ env_vars, static_data }: {
@@ -34,6 +35,7 @@ export function InteractivePage({ env_vars, static_data }: {
     })
 
     const [showWarnings, setShowWarnings] = useState(false)
+    const [showNewQuoteWarning, setShowNewQuoteWarning] = useState(false)
 
     return (<div className="flex flex-row flex-wrap lg:flex-nowrap h-full overflow-visible">
         <Card className="2xl:min-w-[786px] xl:min-w-[580px] lg:min-w-[400px] min-w-full">
@@ -56,6 +58,7 @@ export function InteractivePage({ env_vars, static_data }: {
                     <form onSubmit={(e) => {
                         if (selectedQuote == undefined) { e.preventDefault(); return; }
                         api.delete.unverifiedquote({ 'id': selectedQuote!.id })
+                        clearCachesByServerAction("/admin/users")
                     }
                     }>
                         <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] mt-2">Delete Quote</Button>
@@ -72,16 +75,26 @@ export function InteractivePage({ env_vars, static_data }: {
                     <Label htmlFor="date" className="flex flex-row justify-between p-2 pr-4">Date {showWarnings ? <span className="text-red-500 ml-4">Quotes must have a date attributed</span> : ""}</Label>
                     <Input type="number" id="date" placeholder={formData?.date} onInput={(value) => setFormData({ ...formData!, 'date': value.currentTarget.value })} />
                     <Label htmlFor="author" className="flex flex-row justify-between p-2 pr-4">Author {showWarnings ? <span className="text-red-500 ml-4">Quotes must have an author</span> : ""}</Label>
-                    <AuthorSelector showLabel={false} onSelectedAuthorChanged={(a) => { setFormData({ ...formData, 'author': a }) }} sourceAuthors={static_data.authors} />
-                    <TagSelector showLabel={true} onSelectedTagsChanged={(t) => { setFormData({ ...formData, 'tags': t }) }} sourceTags={static_data.tags} includeAuthor={formData.author ?? undefined} />
-
+                    <AuthorSelector 
+                        showLabel={false} 
+                        onSelectedAuthorAdded={(a) => {setFormData({...formData, 'author':a, 'tags':formData.tags.concat([a.tag])})} }
+                        onSelectedAuthorRemoved={(a) => {setFormData({...formData, 'author': null, 'tags':formData.tags.filter(t => t.id != a.tag.id)})}}
+                        sourceAuthors={static_data.authors} 
+                    />
+                    <TagSelector 
+                        showLabel={true} 
+                        onSelectedTagsChanged={(t) => { 
+                            setFormData({ ...formData, 'tags': t }) 
+                        }} 
+                        sourceTags={static_data.tags} 
+                        includeAuthor={formData.author ?? undefined} 
+                    />
                     <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] mt-2" onClick={(e) => {
-                        if (formData.author == null || formData.quote == "" || formData.date == "") { e.preventDefault(); setShowWarnings(true); return; }
-                        if (selectedQuote == undefined) { return; }
+                        e.preventDefault()
+                        if (formData.author == null || formData.quote == "" || formData.date == "") { setShowWarnings(true); return; }
+                        if (selectedQuote == undefined) { setShowNewQuoteWarning(true); return; }
                         console.log(JSON.stringify(formData))
 
-                        //TODO: For the purposes of testing, this call to api.add.quote has been replaced with a console.log (see /src/app/api/db/add/quote)
-                        //      This needs to be undone, when testing is over.
                         api.add.quote({
                             'preamble': formData.preamble,
                             'quote': formData.quote,
@@ -92,12 +105,14 @@ export function InteractivePage({ env_vars, static_data }: {
                             'tags': formData.tags
                         });
                         api.delete.unverifiedquote({ 'id': selectedQuote.id });
-                    }} type="submit">Submit</Button>
+                        clearCachesByServerAction("/admin/users")
+                        }} type="submit">Submit</Button>
                 </form>
             </CardContent>
         </Card>
         <div className="flex-shrink">
             <Table data={quotes} onItemSelected={setSelectedQuote} />
         </div>
+        
     </div>)
 }
