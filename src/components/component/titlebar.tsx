@@ -89,7 +89,10 @@ function NavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                                 Audit Unverified Quotes
                             </ListItem>
                             <ListItem href={"/admin/users"} title="Edit Users">
-                                Edit / Add Users
+                                Edit Users
+                            </ListItem>
+                            <ListItem href={"/admin/whitelist"} title="Edit Whitelist">
+                                Edit Whitelist For New Accounts
                             </ListItem>
                             <ListItem href={"/admin/delete"} title="Remove Tags / Authors">
                                 Clean Up Unused Tags And Authors
@@ -151,7 +154,10 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                                 Audit Unverified Quotes
                             </ListItem>
                             <ListItem href={"/admin/users"} title="Edit Users">
-                                Edit / Add Users
+                                Edit Users
+                            </ListItem>
+                            <ListItem href={"/admin/whitelist"} title="Edit Whitelist">
+                                Edit Whitelist For New Accounts
                             </ListItem>
                             <ListItem href={"/admin/delete"} title="Remove Tags/Authors">
                                 Remove Tags / Authors
