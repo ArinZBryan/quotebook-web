@@ -35,6 +35,9 @@ export async function getQuotesRaw(limit?: number): Promise<RichQuote[]> {
         .innerJoin(db_tables.authors, eq(db_tables.quotes.author, db_tables.authors.id))
 
     return rows.map((row) => {
+
+        if (row.tags == null) { row.tags = "" }
+
         return {
             id: row.quote_id,
             preamble: row.preamble,
