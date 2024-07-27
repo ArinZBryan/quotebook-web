@@ -41,7 +41,6 @@ export function InteractivePage(props: { rich_quotes: RichQuote[], authors: Auth
             .then((res) => res.json())
             .then((data) => {
                 setLinkedAccount(data)
-                console.log(data)
             })
     }, [selectedAuthor])
 
