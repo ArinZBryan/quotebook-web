@@ -8,7 +8,6 @@ import { eq } from 'drizzle-orm'
 export async function respond(newData: formData) {
     const tagvalues = newData.tags.map((t) => {return {tag: t.id, quote: newData.id}})
 
-
     await db.update(db_tables.quotes)
         .set({
             preamble: newData.preamble,

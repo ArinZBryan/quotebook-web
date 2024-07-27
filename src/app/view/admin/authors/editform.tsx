@@ -48,13 +48,16 @@ export function EditForm({ rowData }: { rowData: Author }) {
             })
     }, [])
 
-    useEffect(() => console.log(formData), [formData])
-
     return (<>
         <Label htmlFor="preferred_name">Preferred Name</Label>
-        <Input id="preferred_name" placeholder={rowData.preferred_name} />
+        <Input id="preferred_name" defaultValue={rowData.preferred_name} />
         <Label htmlFor="tag">Author Tag{showWarnings ? <span className="text-red-500 ml-4">Tag is REQUIRED</span> : ""}</Label>
-        <TagSelectorSingle showLabel={false} sourceTags={tagData} onSelectedTagChanged={(t) => {setFormData({...formData, 'tag' : t})}} />
+        <TagSelectorSingle 
+            showLabel={false} 
+            sourceTags={tagData} 
+            defaultTag={rowData.tag}
+            onSelectedTagChanged={(t) => {setFormData({...formData, 'tag' : t})}} 
+        />
         <Label htmlFor="tag">Search Text</Label>
         <Input type="text" id="tag" onKeyDown={(e) => {
             if (e.key == 'Enter') setFormData({ ...formData, 'search_text': formData.search_text.concat([e.currentTarget.value]) })

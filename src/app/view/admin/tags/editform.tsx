@@ -37,8 +37,6 @@ export function EditForm({ rowData }: { rowData: Tag }) {
 
     const [deleteResult, setDeleteResult] = useState<{ successful: boolean, reason: string } | null>(null)
 
-    useEffect(() => console.log(formData), [formData])
-
     return (<>
         <Label htmlFor="title">Preamble</Label>
         <Input type="text" id="title" defaultValue={formData.title} onInput={(e) => setFormData({ ...formData, 'title': e.currentTarget.value })} />
@@ -66,7 +64,7 @@ export function EditForm({ rowData }: { rowData: Tag }) {
         <AlertDialog>
             <AlertDialogTrigger>
                 <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] w-full">
-                    Delete Author
+                    Delete Tag
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

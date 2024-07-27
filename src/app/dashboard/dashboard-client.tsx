@@ -60,8 +60,6 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
         ]
     } as RichQuote
 
-    console.log(userauthor?.preferred_name)
-
     if (smallWindow) {
         return <Grid cols={1} gap={3} className='p-3'>
             <GridElement className='w-full h-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 1, row: 0, column: 0 }}>

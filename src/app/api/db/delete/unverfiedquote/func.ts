@@ -8,8 +8,6 @@ export async function respond(newData: formData): Promise<{ successful: boolean,
         'reason': ""
     }
 
-    console.log(newData); return {...res, 'reason': "Mock Implementation"};
-
     await db.delete(db_tables.tags)
         .where(eq(db_tables.tags.id, newData.id))
         .catch((reason) => {
