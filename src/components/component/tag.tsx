@@ -81,8 +81,8 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState, class
                 {
                     !controlHidden ? 
                         (controlState == "pin" ? 
-                            <PinIcon onClick={() => {setControlState("unpin");onAdd(tag)}} /> : 
-                            <PinOffIcon onClick={() => {setControlState("pin");onRemove(tag)}} />
+                            <PinIcon onClick={() => {setControlState("unpin");onAdd(tag);}} /> : 
+                            <PinOffIcon onClick={() => {setControlState("pin");onRemove(tag);}} />
                         ) : ""
                 }
                 </span>
