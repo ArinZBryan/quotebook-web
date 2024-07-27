@@ -71,7 +71,6 @@ export function InteractivePage({ static_data }: {
                                 'linked_author': formData.linked_author?.id,
                                 'make_admin': formData.make_admin ? "true" : "false"
                             },
-                            "/admin/whitelist"
                         )
                         clearCachesByServerAction("/admin/whitelist")
                         e.preventDefault();
