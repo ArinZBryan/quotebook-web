@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { TagSelectorSingle } from "@/components/component/tag-selector"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 import { api } from "@/api"
+import clearCachesByServerAction from "@/lib/revalidate"
 
 export function Tags({ static_data }: {
     static_data: {
@@ -56,17 +58,19 @@ export function Tags({ static_data }: {
                             setModifedTags(modifiedTags.concat([{ 'type': 'delete', 'target': selectedTag }]))
                         }}>Delete</Button>
                     </div>
+
                 </CardContent>
             </Card>
             <ScrollArea className="h-[80vh]">
                 <div className="flex flex-row flex-wrap">
                     {
                         static_data.tags.map((t, i) =>
-                            <div className="m-2" onClick={() => { setSelectedTag(t) }}>
-                                <TagStd tag={t} key={i} className="border-0 hover:border-white hover:border-[1px] " />
+                            <div className="m-2" onClick={() => { setSelectedTag(t) }} key={i}>
+                                <TagStd tag={t} className="border-0 hover:border-white hover:border-[1px] " />
                             </div>)
                     }
                 </div>
+                <Button className="w-full" variant="ghost" onClick={() => {clearCachesByServerAction("/admin/delete");}}>Refresh Content</Button>
             </ScrollArea>
         </div>
         {modifiedTags.length <= 0 ? "" :
@@ -79,8 +83,9 @@ export function Tags({ static_data }: {
                             You have {modifiedTags.length} unsaved change(s)
                         </AlertDescription>
                     </div>
-                    <form onSubmit={() => { 
-                        modifiedTags.forEach((v) => {
+                    <form onSubmit={async (e) => { 
+                        e.preventDefault();
+                        const settled = await Promise.all(modifiedTags.map((v) => {
                             if (v.type === "new") {
                                 api.add.tag({
                                     'category' : v.target.category,
@@ -93,11 +98,16 @@ export function Tags({ static_data }: {
                                     'title' : v.target.title
                                 })
                             } else if (v.type === "delete") {
-                                api.delete.tag({
+                                return api.delete.tag({
                                     'id' : v.target.id
                                 })
                             }
+                        }))
+                        settled.forEach(v => {
+                            if (v !== null && typeof v === 'object') { if (!v.successful) { toast("Could Not Delete Tag", {description: v.reason})}}
                         })
+                        clearCachesByServerAction("/admin/delete");
+                        setModifedTags([])
                     }}>
                         <Button type="submit" className="translate-x-8 w-fit p-4 mt-4 mr-10">Save Changes</Button>
                         <Button type="button" variant="ghost" onClick={() => { setModifedTags([]) }}>Discard Changes</Button>
@@ -124,7 +134,7 @@ export function Authors({ static_data }: {
                     Modify Author
                 </CardTitle>
                 <CardContent className="pt-4 flex flex-col items-center">
-                    <Input placeholder={selectedAuthor.preferred_name} className="m-2" onChange={(e) => {
+                    <Input value={selectedAuthor.preferred_name} className="m-2" onChange={(e) => {
                         setSelectedAuthor({ ...selectedAuthor, 'preferred_name': e.currentTarget.value });
                     }} />
                     <Label htmlFor="tag">Search Text</Label>
@@ -151,6 +161,7 @@ export function Authors({ static_data }: {
                     <TagSelectorSingle
                         showLabel={true}
                         sourceTags={static_data.tags}
+                        defaultTag={selectedAuthor.tag}
                         onSelectedTagChanged={(t) => {
                             setSelectedAuthor({ ...selectedAuthor, tag: t ?? { 'category': "Miscellaneous", 'title': "Placeholder", 'id': -1 } })
                         }}
@@ -172,11 +183,12 @@ export function Authors({ static_data }: {
                 <div className="flex flex-row flex-wrap">
                     {
                         static_data.authors.map((a, i) =>
-                            <div className="m-2" onClick={() => { setSelectedAuthor(a) }}>
-                                <AuthorTagStd author={a} key={i} className="border-0 hover:border-white hover:border-[1px] " />
+                            <div className="m-2" onClick={() => { setSelectedAuthor(a) }} key={i}>
+                                <AuthorTagStd author={a} className="border-0 hover:border-white hover:border-[1px] " />
                             </div>)
                     }
                 </div>
+                <Button className="w-full" variant="ghost" onClick={() => {clearCachesByServerAction("/admin/delete");}}>Refresh Content</Button>
             </ScrollArea>
         </div>
         {modifiedAuthors.length <= 0 ? "" :
@@ -189,7 +201,8 @@ export function Authors({ static_data }: {
                             You have {modifiedAuthors.length} unsaved change(s)
                         </AlertDescription>
                     </div>
-                    <form onSubmit={() => {
+                    <form onSubmit={(e) => {
+                        e.preventDefault()
                         modifiedAuthors.forEach((v) => {
                             if (v.type === "new") {
                                 api.add.author({
@@ -210,6 +223,7 @@ export function Authors({ static_data }: {
                                 })
                             }
                         })
+                        clearCachesByServerAction("/admin/users")
                     }}>
                         <Button type="submit" className="translate-x-8 w-fit p-4 mt-4 mr-10">Save Changes</Button>
                         <Button type="button" variant="ghost" onClick={() => { setModifedAuthors([]) }}>Discard Changes</Button>

@@ -2,6 +2,7 @@ import { TitleBar } from "@/components/component/titlebar"
 import { SessionProvider } from "next-auth/react"
 import { api } from "@/api"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Toaster } from "@/components/ui/sonner"
 import { Authors, Tags } from "./client"
 
 export default async function Page() {
@@ -25,5 +26,6 @@ export default async function Page() {
                 </TabsContent>
             </Tabs>
         </SessionProvider>
+        <Toaster />
     </>
 }
