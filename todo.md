@@ -10,15 +10,18 @@
     - [x] Remove @mui/x-chartx + @emotion
     - [x] Add charts.js react bindings 
     - [x] Collect Basic Statistics Per profile
-    - [ ] Display oldest quote
-    - [ ] Ask for more dashboard data suggestions.
-- [ ] Stats page
-    - [ ] Collect detailed statistics per author
-    - [ ] Collect detailed statistics per tag
+    - [x] Display oldest quote
+    - [x] Ask for more dashboard data suggestions.
+- [x] Stats page
+    - [x] Collect detailed statistics per author
+    - [x] Collect detailed statistics per tag
 - [ ] Integrate bot API into this next-project
     - [ ] Merge git trees
     - [ ] Make API publicly available
-- [ ] Deploy to vercel
-    - [ ] Set up cron jobs for bot api
-    - [ ] Deploy git repo for vercel
-    - [ ] Test all features work
+- [x] Deploy to vercel
+    - [x] Set up cron jobs for bot api
+    - [x] Deploy git repo for vercel
+    - [x] Test all features work
+- [ ] Move Whitelisted Users to DB Table
+- [ ] Add functionality: add users from admin panel
+- [ ] Add users to whitelist
