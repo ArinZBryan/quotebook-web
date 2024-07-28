@@ -37,8 +37,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             //check if account is on whitelist to make
             const whitelist = await db.select()
                 .from(db_tables.whitelisted_users)
-                .where(eq(db_tables.whitelisted_users.discord_id, account?.providerAccountId ?? ""))
-            if (whitelist.length < 1 ) {
+
+            if (whitelist.filter((v) => v.discord_id == account?.providerAccountId).length >= 1 ) {
                 return true
             }
             
