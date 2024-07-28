@@ -64,8 +64,8 @@ export function InteractivePage({ static_data }: {
                     </p>
                     <p>Administrator: {(selectedUser.admin ?? "false") + ""}</p>
                     <AlertDialog>
-                        <AlertDialogTrigger>
-                            <Button variant={'destructive'}>
+                        <AlertDialogTrigger asChild>
+                            <Button variant={'destructive'} className="w-full">
                                 Delete User
                             </Button>
                         </AlertDialogTrigger>
@@ -82,7 +82,7 @@ export function InteractivePage({ static_data }: {
                                     <form onSubmit={(e) => {
                                         e.preventDefault();
                                         api.delete.user({'id': selectedUser.id})
-                                    }}>
+                                    }} className="p-0">
                                         <Button type="submit" variant={'destructive'}>
                                             Continue
                                         </Button>    
@@ -91,13 +91,6 @@ export function InteractivePage({ static_data }: {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                    <form onSubmit={(e) => {
-                        e.preventDefault()
-                        api.delete.user({ 'id': selectedUser.id })
-                        clearCachesByServerAction("/admin/users")
-                    }}>
-                        <Button variant={'destructive'}>Delete This User</Button>
-                    </form>
                 </>
                 }
             </CardHeader>
