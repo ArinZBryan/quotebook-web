@@ -52,6 +52,12 @@ export function InteractivePage({ static_data }: {
                         </span>
                     </p>
                     <p>Administrator: {(selectedUser.admin ?? "false") + ""}</p>
+                    <form onSubmit={(e) => {
+                        e.preventDefault()
+                        api.delete.user({'id': selectedUser.id})
+                    }}>
+                        <Button variant={'destructive'}>Delete This User</Button>
+                    </form>
                 </>
                 }
             </CardHeader>

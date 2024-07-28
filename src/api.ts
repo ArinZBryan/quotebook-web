@@ -2,7 +2,8 @@ import { respond as delete_author } from "@/app/api/db/delete/author/func";
 import { respond as delete_tag } from "@/app/api/db/delete/tag/func";
 import { respond as delete_unverifedquote } from "@/app/api/db/delete/unverfiedquote/func"
 import { respond as delete_whitelisteduser } from "@/app/api/db/delete/whitelisteduser/func";
-import { respond as delete_quote } from "@/app/api/db/delete/quote/func"
+import { respond as delete_quote } from "@/app/api/db/delete/quote/func";
+import { respond as delete_user } from "@/app/api/db/delete/user/func"
 import { respond as modify_author } from "@/app/api/db/modify/author/func";
 import { respond as modify_tag } from "@/app/api/db/modify/tag/func"
 import { respond as modify_quote } from "@/app/api/db/modify/quote/func";
@@ -41,6 +42,7 @@ export const api = {
         unverifiedquote: delete_unverifedquote,
         whitelisteduser : delete_whitelisteduser,
         quote: delete_quote,
+        user: delete_user,
     },
     modify: {
         author: modify_author,
