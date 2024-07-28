@@ -4,6 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AuthorSelector } from "@/components/component/tag-selector";
 import { AuthorTagStd } from "@/components/component/tag";
@@ -52,9 +63,37 @@ export function InteractivePage({ static_data }: {
                         </span>
                     </p>
                     <p>Administrator: {(selectedUser.admin ?? "false") + ""}</p>
+                    <AlertDialog>
+                        <AlertDialogTrigger>
+                            <Button variant={'destructive'}>
+                                Delete User
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete this author.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction asChild>
+                                    <form onSubmit={(e) => {
+                                        e.preventDefault();
+                                        api.delete.user({'id': selectedUser.id})
+                                    }}>
+                                        <Button type="submit" variant={'destructive'}>
+                                            Continue
+                                        </Button>    
+                                    </form>
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                     <form onSubmit={(e) => {
                         e.preventDefault()
-                        api.delete.user({'id': selectedUser.id})
+                        api.delete.user({ 'id': selectedUser.id })
                         clearCachesByServerAction("/admin/users")
                     }}>
                         <Button variant={'destructive'}>Delete This User</Button>
