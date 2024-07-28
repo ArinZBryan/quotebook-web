@@ -8,8 +8,8 @@ export async function respond(newData: formData): Promise<{ successful: boolean,
         'reason': ""
     }
 
-    await db.delete(db_tables.users)
-        .where(eq(db_tables.users.id, newData.id))
+    await db.delete(db_tables.tags)
+        .where(eq(db_tables.tags.id, newData.id))
         .catch((reason) => {
             console.log(reason)
             res = {
@@ -23,5 +23,5 @@ export async function respond(newData: formData): Promise<{ successful: boolean,
 
 // update to conform with form page
 type formData = {
-    'id': string
+    'id': number
 }
