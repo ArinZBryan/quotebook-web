@@ -1,3 +1,8 @@
+# Quotebook-Web
+This project is a web interface for a [quote scraping bot](https://github.com/ArinZBryan/quotebook-bot) that uses discord as its source.
+
+This bot uses libsql, and so expects access to a sqlite database to store quotes and other data in.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
