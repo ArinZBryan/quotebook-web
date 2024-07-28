@@ -55,6 +55,7 @@ export function InteractivePage({ static_data }: {
                     <form onSubmit={(e) => {
                         e.preventDefault()
                         api.delete.user({'id': selectedUser.id})
+                        clearCachesByServerAction("/admin/users")
                     }}>
                         <Button variant={'destructive'}>Delete This User</Button>
                     </form>
