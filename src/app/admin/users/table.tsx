@@ -21,10 +21,10 @@ export function Table({ data, onItemSelected }: { data: RichUser[], onItemSelect
     const [colWidths, setColWidths] = useState<{ [T in keyof RichUser]: number }>({ 
         'id': std_width, 
         'name' : std_width,
-        'email' : std_width,
+        'email' : std_width * 11/6,
         'emailVerified' : 0,
-        'image' : std_width,
-        'admin' : std_width,
+        'image' : std_width * 2/6 ,
+        'admin' : std_width * 3/6,
         'linked_author' : std_width,
     });
 
