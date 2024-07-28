@@ -13,12 +13,12 @@ export async function POST(req: Request) {
     }
     else {
         let rawjson: formData = {
-            'id': 0
+            'id': ""
         }
         try {
             rawjson = (await req.json())
         } catch (e) { if (!(e instanceof TypeError)) throw e; }
-        const ret = api.delete.unverifiedquote(rawjson as formData)
+        const ret = api.delete.user(rawjson as formData)
         const res = NextResponse.json(ret);
         return res;  
     }
@@ -26,5 +26,5 @@ export async function POST(req: Request) {
 
 // update to conform with form page
 type formData = {
-    'id': number
+    'id': string
 }
