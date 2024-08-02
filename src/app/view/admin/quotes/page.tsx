@@ -21,7 +21,7 @@ export default async function Page() {
             <TitleBar />
             <ShowOnLogin adminOnly={true}>
                 <div className="w-full">
-                    <InteractivePage/>
+                    <InteractivePage channel_id={process.env.DISCORD_SOURCE_SERVER!} server_id={process.env.DISCORD_SOURCE_CHANNEL!}/>
                 </div>
             </ShowOnLogin>
 

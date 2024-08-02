@@ -25,13 +25,14 @@ import { EditForm } from "./editform";
 
 interface TableProps {
     data: RichQuote[],
+    env_vars: { server_id: string, channel_id: string },
     onTableInvalid: () => void
 }
 
 // The below IDE warning is actually fine. As this client component is only ever used by other client components, there
 // is no issue here, just the TS VSCode plugin being wierd.
 // This even has an issue on github: https://github.com/vercel/next.js/issues/55332, so it is a known issue.
-export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
+export const Table: React.FC<TableProps> = ({ data, onTableInvalid, env_vars }) => {
     function sortFunction(options: FilterOptions): (a: RichQuote, b: RichQuote) => number {
         let dir = 0;
         if (options.sort == undefined) { return () => 0; }
@@ -52,17 +53,6 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                 return options.contains!.test(ret);
             }
             return options.contains!.test(String(a[options.col]))
-        }
-    }
-    function selectFunction(cols: (keyof RichQuote)[]): (quote: RichQuote) => Partial<RichQuote> {
-        return (q: RichQuote) => {
-            let p: Partial<RichQuote> = {}
-            cols.forEach((key: keyof RichQuote) => {
-                //the below code is fine, it will not error and compiles fine, but vscode is having a hissy
-                //@ts-ignore
-                p[key] = q[key]
-            })
-            return p;
         }
     }
 
@@ -240,7 +230,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                 </ResizablePanelGroup>
                 {selectedData.map((v, i) =>
                     <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()} />
+                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()} env_vars={env_vars}/>
                     </div>
                 )}
             </div>
@@ -248,7 +238,12 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     )
 }
 
-function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose }: { rowData: T, colWidths: { [K in keyof T]: number }, formData: RichQuote, onEditClose: () => void }) {
+function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose, env_vars }: { 
+    rowData: T, 
+    colWidths: { [K in keyof T]: number }, 
+    formData: RichQuote, onEditClose: () => void
+    env_vars: { server_id: string, channel_id: string },
+}) {
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -301,7 +296,8 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                     <DialogHeader>
                         <DialogTitle>Modify Entry</DialogTitle>
                         <DialogDescription>
-                            This action cannot be undone.
+                            This action cannot be undone.<br/>
+                            <a href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${rowData.message_id}`}>View Original Message</a>
                         </DialogDescription>
                     </DialogHeader>
                     <EditForm rowData={formData} />
