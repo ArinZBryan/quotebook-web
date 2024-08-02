@@ -18,26 +18,6 @@ export default async function Page() {
     return <div className="h-dvh">
         <SessionProvider>
             <TitleBar />
-            
-                <div>
-                    {process.env.DISCORD_SOURCE_SERVER ?? ""}
-                    {process.env.DISCORD_SOURCE_CHANNEL ?? ""}
-                </div>
-                <div className="w-full">
-                    <InteractivePage channel_id={process.env.DISCORD_SOURCE_SERVER!} server_id={process.env.DISCORD_SOURCE_CHANNEL!} />
-                </div>
-            
-
-        </SessionProvider>
-        <div className="flex items-center justify-center" style={{ height: "-webkit-fill-available" }}>
-            <span className="text-gray-700">There's Nothing Here...</span>
-        </div>
-
-    </div>
-
-    return <div className="h-dvh">
-        <SessionProvider>
-            <TitleBar />
             <ShowOnLogin adminOnly={true}>
                 <div>
                     {process.env.DISCORD_SOURCE_SERVER ?? ""}
