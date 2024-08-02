@@ -297,7 +297,10 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                         <DialogTitle>Modify Entry</DialogTitle>
                         <DialogDescription>
                             This action cannot be undone.<br/>
-                            <a href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${rowData.message_id}`}>View Original Message</a>
+                            <a 
+                                className="underline text-blue-700"
+                                href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${rowData.message_id}`}
+                            >View Original Message</a>
                         </DialogDescription>
                     </DialogHeader>
                     <EditForm rowData={formData} />
