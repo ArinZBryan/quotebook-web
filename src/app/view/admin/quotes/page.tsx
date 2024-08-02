@@ -20,6 +20,10 @@ export default async function Page() {
         <SessionProvider>
             <TitleBar />
             <ShowOnLogin adminOnly={true}>
+            <div>
+                {process.env.DISCORD_SOURCE_SERVER ?? ""}
+                {process.env.DISCORD_SOURCE_CHANNEL ?? ""}
+            </div>
                 <div className="w-full">
                     <InteractivePage channel_id={process.env.DISCORD_SOURCE_SERVER!} server_id={process.env.DISCORD_SOURCE_CHANNEL!}/>
                 </div>
