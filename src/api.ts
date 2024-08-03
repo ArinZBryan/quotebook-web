@@ -17,7 +17,8 @@ import { getUserData as get_userauthor} from "@/app/api/db/get/userauthor/func";
 import { getLinkedUser as get_linkeduser } from "./app/api/db/get/linkedaccount/func";
 import { getUnverifiedQuotes as get_unverifedquotes } from "./app/api/db/get/unverifiedquotes/func";
 import { getUsers as get_users } from "@/app/api/db/get/users/func";
-import { geWhitelistedtUsers as get_whitelistedusers } from "./app/api/db/get/whitelistedusers/func";
+import { getWhitelistedtUsers as get_whitelistedusers } from "./app/api/db/get/whitelistedusers/func";
+import { getUrl as get_quoteurl } from "./app/api/db/get/quoteurl/func";
 import { respond as add_author } from "@/app/api/db/add/author/func"
 import { respond as add_quote } from "@/app/api/db/add/quote/func"
 import { respond as add_tag } from "@/app/api/db/add/tag/func"
@@ -34,7 +35,8 @@ export const api = {
         linkeduser: get_linkeduser,
         unverifiedquotes: get_unverifedquotes,
         users: get_users,
-        whitelistedusers: get_whitelistedusers
+        whitelistedusers: get_whitelistedusers,
+        quoteurl: get_quoteurl,
     },
     delete: {
         author: delete_author,

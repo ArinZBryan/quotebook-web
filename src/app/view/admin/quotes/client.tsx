@@ -6,7 +6,7 @@ import { Table as QuotesTable } from "./table"
 import { SkeletonTable } from "./skeleton-table"
 import { Reload } from "@/components/component/reload"
 
-export function InteractivePage(env_vars : { server_id: string, channel_id: string }) {
+export function InteractivePage() {
 
     const [quotes, SetQuotes] = useState<RichQuote[]>([])
 
@@ -24,7 +24,6 @@ export function InteractivePage(env_vars : { server_id: string, channel_id: stri
                 .then((v) => v.json())
                 .then(SetQuotes)
             }}
-            env_vars={env_vars}
         />
         <ScrollToTop />
         <Reload onClick={async () => {

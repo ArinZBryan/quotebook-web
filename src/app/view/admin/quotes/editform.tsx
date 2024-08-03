@@ -24,7 +24,7 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
 
     const [authorData, setAuthorData] = useState<Author[]>([])
     const [tagData, setTagData] = useState<Tag[]>([])
-
+    const [quotelink, setQuoteLink] = useState("");
     const [formData, setFormData] = useState<{
         'id': number,
         'preamble': string,
@@ -52,11 +52,29 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
             .then((data) => {
                 setTagData(data)
             })
+        fetch('/api/db/get/quoteurl', {
+            'method': 'POST',
+            'body': JSON.stringify(rowData.message_id),
+            'headers': {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+            .then((res) => res.json())
+            .then((v) => setQuoteLink(v))
     }, [])
 
     const [showWarnings, setShowWarnings] = useState(false)
 
     return (<form>
+        <Button type="button" variant={"link"} asChild>
+            <a
+                className="text-md -translate-y-6 -translate-x-3"
+                href={quotelink}
+                target="_blank"
+                rel="noopener noreferrer"
+            >View Original Message</a>
+        </Button>
+        <br />
         <Label htmlFor="preamble">Preamble</Label>
         <Textarea id="preamble" defaultValue={formData.preamble} onInput={(value) => setFormData({ ...formData, 'preamble': value.currentTarget.value })}></Textarea>
         <Label htmlFor="quote">Quote</Label>
@@ -87,9 +105,9 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
         >Submit</Button>
         <AlertDialog>
             <AlertDialogTrigger asChild>
-            <Button variant={'destructive'} className="w-full mt-4">
-                Delete Quote
-            </Button>    
+                <Button variant={'destructive'} className="w-full mt-4">
+                    Delete Quote
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -104,7 +122,7 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
                     <AlertDialogAction asChild>
                         <form onSubmit={(e) => {
                             e.preventDefault()
-                            api.delete.quote({'id' : formData.id})
+                            api.delete.quote({ 'id': formData.id })
                         }} className="!p-0">
                             <Button variant={'destructive'} type="submit" className="w-full h-full">Continue</Button>
                         </form>
