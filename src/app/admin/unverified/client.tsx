@@ -51,7 +51,10 @@ export function InteractivePage({ env_vars, static_data }: {
                         {selectedQuote?.message_date.substring(11, 16)}
                     </p>
                     <p className="text-[#5662f6] underline">
-                        <a href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${selectedQuote?.message_id}`}>
+                        <a href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${selectedQuote?.message_id}`}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
                             {selectedQuote == null ? "" : "Link To Original Message"}
                         </a>
                     </p>
