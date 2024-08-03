@@ -15,13 +15,12 @@ export default async function Page() {
 
     data = await api.get.richquotes()
 
-
     return <div className="h-dvh">
         <SessionProvider>
             <TitleBar />
             <ShowOnLogin adminOnly={true}>
                 <div className="w-full">
-                    <InteractivePage channel_id={process.env.DISCORD_SOURCE_SERVER!} server_id={process.env.DISCORD_SOURCE_CHANNEL!}/>
+                    <InteractivePage/>
                 </div>
             </ShowOnLogin>
 

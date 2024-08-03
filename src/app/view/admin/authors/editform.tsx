@@ -69,9 +69,8 @@ export function EditForm({ rowData }: { rowData: Author }) {
                 }
             </ScrollArea>
         }
-        <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC]" onClick={() => {
+        <Button type="submit" className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC]" onClick={() => {
             if (formData.tag == null) { setShowWarnings(true); return; }
-            console.log(JSON.stringify(formData))
             fetch('/api/db/modify/author', {
                 'method': 'POST',
                 'body': JSON.stringify(formData),
@@ -86,7 +85,7 @@ export function EditForm({ rowData }: { rowData: Author }) {
         }}>Submit Changes</Button>
         <AlertDialog>
             <AlertDialogTrigger>
-                <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] w-full">
+                <Button type="button" className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] w-full">
                     Delete Author
                 </Button>
             </AlertDialogTrigger>

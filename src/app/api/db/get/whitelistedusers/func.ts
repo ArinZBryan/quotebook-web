@@ -4,7 +4,7 @@ import { db, db_tables } from '@/schema'
 import { Author } from '../../types'
 import { api } from '@/api'
 
-export async function geWhitelistedtUsers(quantity? : number): Promise<{
+export async function getWhitelistedtUsers(quantity? : number): Promise<{
     'id' : number,
     'discord_id' : string,
     'linked_author' : Author | null,

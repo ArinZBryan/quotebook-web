@@ -25,14 +25,13 @@ import { EditForm } from "./editform";
 
 interface TableProps {
     data: RichQuote[],
-    env_vars: { server_id: string, channel_id: string },
     onTableInvalid: () => void
 }
 
 // The below IDE warning is actually fine. As this client component is only ever used by other client components, there
 // is no issue here, just the TS VSCode plugin being wierd.
 // This even has an issue on github: https://github.com/vercel/next.js/issues/55332, so it is a known issue.
-export const Table: React.FC<TableProps> = ({ data, onTableInvalid, env_vars }) => {
+export const Table: React.FC<TableProps> = ({ data, onTableInvalid}) => {
     function sortFunction(options: FilterOptions): (a: RichQuote, b: RichQuote) => number {
         let dir = 0;
         if (options.sort == undefined) { return () => 0; }
@@ -230,7 +229,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid, env_vars }) 
                 </ResizablePanelGroup>
                 {selectedData.map((v, i) =>
                     <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()} env_vars={env_vars}/>
+                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()}/>
                     </div>
                 )}
             </div>
@@ -238,14 +237,14 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid, env_vars }) 
     )
 }
 
-function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose, env_vars }: { 
+function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose }: { 
     rowData: T, 
     colWidths: { [K in keyof T]: number }, 
     formData: RichQuote, onEditClose: () => void
-    env_vars: { server_id: string, channel_id: string },
 }) {
 
     const [dialogOpen, setDialogOpen] = useState(false);
+
 
     return (
         <div
@@ -291,16 +290,16 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                 })
             }
             <hr />
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog open={dialogOpen} onOpenChange={(state) => {
+                setDialogOpen(state)
+                    
+                
+            }}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Modify Entry</DialogTitle>
                         <DialogDescription>
-                            This action cannot be undone.<br/>
-                            <a 
-                                className="underline text-blue-700"
-                                href={`https://discord.com/channels/${env_vars.server_id}/${env_vars.channel_id}/${rowData.message_id}`}
-                            >View Original Message</a>
+                            This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <EditForm rowData={formData} />
