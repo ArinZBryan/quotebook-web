@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Toaster } from "@/components/ui/toaster";
 import { RichQuote } from "@/app/api/db/types";
-
+import { VariableSizeList as List } from 'react-window'
 import { FilterOptionsPanel } from './filteroptions'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useToast } from "@/components/ui/use-toast";
@@ -31,7 +31,7 @@ interface TableProps {
 // The below IDE warning is actually fine. As this client component is only ever used by other client components, there
 // is no issue here, just the TS VSCode plugin being wierd.
 // This even has an issue on github: https://github.com/vercel/next.js/issues/55332, so it is a known issue.
-export const Table: React.FC<TableProps> = ({ data, onTableInvalid}) => {
+export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     function sortFunction(options: FilterOptions): (a: RichQuote, b: RichQuote) => number {
         let dir = 0;
         if (options.sort == undefined) { return () => 0; }
@@ -58,18 +58,18 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid}) => {
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" })
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "author" })
 
-    const stdWidth = 100/9
+    const stdWidth = 100 / 9
 
     const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({
-        'id': stdWidth * 1/3,
-        'preamble': stdWidth * 5/3,
-        'quote': stdWidth * 14/6,
-        'author': stdWidth * 11/12,
-        'date': stdWidth * 5/12,
+        'id': stdWidth * 1 / 3,
+        'preamble': stdWidth * 5 / 3,
+        'quote': stdWidth * 14 / 6,
+        'author': stdWidth * 11 / 12,
+        'date': stdWidth * 5 / 12,
         'confirmed_date': 0,
-        'tags': stdWidth * 5/3,
+        'tags': stdWidth * 5 / 3,
         'message_id': stdWidth,
-        'message_date': stdWidth * 4/6
+        'message_date': stdWidth * 4 / 6
     })
 
     const { toast } = useToast()
@@ -188,7 +188,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid}) => {
                             </div>
                             <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
                                 setSortOptions({ sort: v.direction, col: "message_id" });
-                                    setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "message_id" })
+                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "message_id" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
                                 });
@@ -227,20 +227,30 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid}) => {
                         </div>
                     </ResizablePanel>
                 </ResizablePanelGroup>
-                {selectedData.map((v, i) =>
-                    <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                        <TableRow rowData={v} colWidths={colWidths} formData={selectedData[i]} onEditClose={() => onTableInvalid()}/>
-                    </div>
-                )}
+                <List
+                    height={775}
+                    itemCount={selectedData.length}
+                    itemSize={(index) => 50}
+                    width={"100%"}
+                >                 
+                    {
+                    ({ index, style }) => (
+                        <div style={style} className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible`}>
+                            <TableRow rowData={selectedData[index]} colWidths={colWidths} formData={selectedData[index]} onEditClose={() => onTableInvalid()}/>
+                        </div>
+                    )
+                    }
+                </List>
             </div>
         </>
     )
 }
 
-function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose }: { 
-    rowData: T, 
-    colWidths: { [K in keyof T]: number }, 
-    formData: RichQuote, onEditClose: () => void
+function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, onEditClose }: {
+    rowData: T,
+    colWidths: { [K in keyof T]: number },
+    formData: RichQuote, 
+    onEditClose: () => void
 }) {
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -270,7 +280,7 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
                                         return rowData.author?.preferred_name;
                                         break;
                                     case "date":
-                                        return <div className="flex flex-row gap-[0.125rem]">{rowData.date}{rowData.confirmed_date == "true" ? <CheckCircle2Icon className="text-gray-500 pt-[0.325rem] pb-[0.325rem]"/> : ""}</div>
+                                        return <div className="flex flex-row gap-[0.125rem]">{rowData.date}{rowData.confirmed_date == "true" ? <CheckCircle2Icon className="text-gray-500 pt-[0.325rem] pb-[0.325rem]" /> : ""}</div>
                                     case "tags":
                                         return useMemo(() => (
                                             <div className="flex flex-row flex-wrap">
@@ -292,8 +302,8 @@ function TableRow<T extends Partial<RichQuote>>({ rowData, colWidths, formData, 
             <hr />
             <Dialog open={dialogOpen} onOpenChange={(state) => {
                 setDialogOpen(state)
-                    
-                
+
+
             }}>
                 <DialogContent>
                     <DialogHeader>
