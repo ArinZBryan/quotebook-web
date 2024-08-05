@@ -13,7 +13,7 @@ const colours = {
     'Miscellaneous': "ffba49"
 }
 
-const tagCutoff = 25
+const tagCutoff = 18
 
 export function TagStd({tag, overrideColor, className}: {tag: Tag, overrideColor? : string, className? : string}) : JSX.Element
 {
