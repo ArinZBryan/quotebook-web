@@ -224,6 +224,7 @@ export function Authors({ static_data }: {
                             }
                         })
                         clearCachesByServerAction("/admin/users")
+                        setModifedAuthors([])
                     }}>
                         <Button type="submit" className="translate-x-8 w-fit p-4 mt-4 mr-10">Save Changes</Button>
                         <Button type="button" variant="ghost" onClick={() => { setModifedAuthors([]) }}>Discard Changes</Button>
