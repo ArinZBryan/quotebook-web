@@ -7,7 +7,6 @@ import { ScrollToTop } from "@/components/component/scroll-to-top"
 import { Table as AuthorsTable } from "./table"
 import { SkeletonTable } from "./skeleton-table"
 import { Reload } from "@/components/component/reload"
-import { useRouter } from 'next/navigation'
 import { api, triggerServerSideReload } from "@/api"
 export default async function Page() {
 
@@ -34,9 +33,5 @@ export default async function Page() {
                 </div>
             </ShowOnLogin>
         </SessionProvider>
-        <div className="flex items-center justify-center" style={{ height: "-webkit-fill-available" }}>
-            <span className="text-gray-700">There's Nothing Here...</span>
-        </div>
-
     </div>
 }

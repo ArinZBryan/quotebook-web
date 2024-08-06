@@ -11,17 +11,34 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardFooter, 
+    CardHeader, 
+    CardTitle
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FixedSizeList as List } from 'react-window'
+import { FilterOptionsPanel } from './filteroptions'
+import { EditForm } from "./editform";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthorTagStd, TagStd } from "@/components/component/tag";
 import { Author } from "@/app/api/db/types";
 
-import { FilterOptionsPanel } from './filteroptions'
-import { useEffect, useRef, useState } from 'react'
+import { CSSProperties, useState } from 'react'
 import { useToast } from "@/components/ui/use-toast";
-import { EyeOffIcon } from "lucide-react";
-import { TagStd } from "@/components/component/tag";
-import { Button } from "@/components/ui/button";
-import { EditForm } from "./editform";
+import useScrollbarSize from 'react-scrollbar-size';
+import { CheckCircle2Icon } from "lucide-react";
+
 
 
 export function Table({ data }: { data: Author[] }) {
@@ -37,35 +54,20 @@ export function Table({ data }: { data: Author[] }) {
         if (options.contains == undefined) { return (a) => false; }
         return (a: Author) => { return options.contains!.test(String(a[options.col])) }
     }
-    function selectFunction(keys: (keyof Author)[]): (author: Author) => Partial<Author> {
-        return (author: Author): Partial<Author> => {
-            const result: Partial<Author> = {};
-            keys.forEach(key => {
-                if (key in author) {
-                    //the below code is fine, it will not error and compiles fine, but vscode is having a hissy
-                    //@ts-ignore
-                    result[key] = author[key]
-                }
-            });
-            return result;
-        };
-    }
 
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" });
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "preferred_name" });
-    const [colWidths, setColWidths] = useState<{ [T in keyof Author]: number }>({ 'id': 100 / 4, 'preferred_name': 100 / 4, 'search_text': 100 / 4, 'tag': 100 / 4 });
+    
+    const stdWidth = 100 / 4;
+    const [colWidths, setColWidths] = useState<{ [T in keyof Author]: number }>({ 
+        'id': stdWidth, 
+        'preferred_name': stdWidth, 
+        'search_text': stdWidth, 
+        'tag': stdWidth 
+    });
 
+    const scrollbarSize = useScrollbarSize()
     const { toast } = useToast()
-
-    const elementRef = useRef<HTMLDivElement>(null);
-    const [width, setWidth] = useState<number>(0);
-
-    useEffect(() => {
-        if (elementRef.current) {
-            const elementWidth = elementRef.current.offsetWidth;
-            setWidth(elementWidth);
-        }
-    }, [elementRef]);
 
     function setColWidthsW(key: keyof Author, s: number) {
         setColWidths(prevState => {
@@ -76,12 +78,12 @@ export function Table({ data }: { data: Author[] }) {
         });
     }
 
-    const filteredData = data.filter(containsFunction(filteroptions)).sort(sortFunction(sortoptions));
-    const selectedData = filteredData.map(selectFunction((Object.keys(data[0]) as (keyof typeof data[0])[])))
+    const selectedData = data.filter(containsFunction(filteroptions)).sort(sortFunction(sortoptions));
     return (
         <>
+            <Toaster />
             <div className="w-full">
-                <ResizablePanelGroup direction="horizontal">
+                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize.width }}>
                     <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
                         <div className="flex h-full items-center justify-center p-6">
                             <div className="flex justify-center flex-grow">
@@ -151,49 +153,95 @@ export function Table({ data }: { data: Author[] }) {
                         </div>
                     </ResizablePanel>
                 </ResizablePanelGroup>
-                {selectedData.map((v, i) =>
-                    <div className={`${i % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""}`} key={i}>
-                        <TableRow rowData={v} colWidths={colWidths} formData={filteredData[i]} />
-                    </div>
-                )}
+                <List
+                    height={775}
+                    itemCount={selectedData.length}
+                    itemSize={55}
+                    width={"100%"}
+                >
+                    {
+                        ({ index, style }) => (
+                            <TableRow 
+                                style={style} 
+                                rowData={selectedData[index]} 
+                                colWidths={colWidths} 
+                                className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible h-full`}
+                            />
+                        )
+                    }
+                </List>
             </div>
         </>
     )
 }
-function TableRow<T extends Partial<Author>>({ rowData, colWidths, formData }: { rowData: T, colWidths: { [K in keyof T]: number }, formData: Author }) {
-
-    const [dialogOpen, setDialogOpen] = useState(false);
+function TableRow<T extends Author>({ rowData, colWidths, className, style, onEditClose }: {
+    rowData: T,
+    colWidths: { [K in keyof T]: number },
+    className? : string,
+    style: CSSProperties,
+    onEditClose?: () => void
+}) {
 
     return (
-        <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent"
-            onDoubleClick={() => setDialogOpen(true)}>
-            {
-                Object.keys(rowData).map((key, index) => {
-                    return <span style={{ width: colWidths[key as keyof T] + "%", paddingLeft: "0.5rem" }} key={index}>
-                        {
-                            key != 'tag' ? String(rowData[key as keyof T]) : <TagStd tag={rowData.tag!} />
-                        }
-                    </span>
-                })
-            }
-            <hr />
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Modify Entry</DialogTitle>
-                        <DialogDescription>
-                            This action cannot be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <EditForm rowData={formData} />
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
-                            Close
-                        </Button>
-                    </DialogClose>
-                </DialogContent>
-            </Dialog>
-        </div>
+        <Dialog>
+            <DialogTrigger className={`w-full ${className}`} style={style}>
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
+                            {
+                                Object.keys(rowData).map((key, index) => {
+                                    return <span style={{ width: colWidths[key as keyof T] + "%", paddingLeft: "0.5rem" }} key={index}>
+                                        {
+                                            key != 'tag' ? String(rowData[key as keyof T]) : <TagStd tag={rowData.tag!} />
+                                        }
+                                    </span>
+                                })
+                            }
+                        </div>
+                    </HoverCardTrigger>
+                    <HoverCardContent asChild>
+                        <Card className="w-96">
+                            <CardTitle className="text-md">
+                                <div>Author</div>
+                            </CardTitle>
+                            <CardDescription>
+                                <div>
+                                    #{rowData.id}
+                                </div>
+                            </CardDescription>
+                            <CardContent>
+                                <div className="text-xl flex flex-col">
+                                    {rowData.preferred_name}
+                                    <AuthorTagStd author={rowData}/>
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <div className="flex flex-col justify-center flex-grow">
+                                    Also known as:
+                                    <div className="flex-grow flex flex-row flex-wrap justify-center">
+                                        {rowData.search_text.split(",").map((n, i) => <span key={i}>{n}</span>)}
+                                    </div>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    </HoverCardContent>
+                </HoverCard>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Modify Entry</DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
+                <EditForm rowData={rowData} />
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary" onClick={() => { onEditClose?.call({}); }}>
+                        Close
+                    </Button>
+                </DialogClose>
+            </DialogContent>
+        </Dialog>
     );
 }
 

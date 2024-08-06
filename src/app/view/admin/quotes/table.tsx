@@ -18,27 +18,31 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardFooter, 
+    CardHeader 
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { RichQuote } from "@/app/api/db/types";
-import { FixedSizeList as List } from 'react-window'
-import { FilterOptionsPanel } from './filteroptions'
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { FixedSizeList as List } from 'react-window';
+import { FilterOptionsPanel } from './filteroptions';
+import { EditForm } from "./editform";
+import { TagStd } from "@/components/component/tag";
+import { CSSProperties, useMemo, useState } from 'react'
 import { useToast } from "@/components/ui/use-toast";
 import useScrollbarSize from 'react-scrollbar-size';
-import { Check, CheckCircle2Icon, EyeOffIcon } from "lucide-react";
-import { TagStd } from "@/components/component/tag";
-import { Button } from "@/components/ui/button";
-import { EditForm } from "./editform";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle2Icon } from "lucide-react";
+
 
 interface TableProps {
     data: RichQuote[],
     onTableInvalid: () => void
 }
 
-// The below IDE warning is actually fine. As this client component is only ever used by other client components, there
-// is no issue here, just the TS VSCode plugin being wierd.
-// This even has an issue on github: https://github.com/vercel/next.js/issues/55332, so it is a known issue.
 export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     function sortFunction(options: FilterOptions): (a: RichQuote, b: RichQuote) => number {
         let dir = 0;
@@ -67,10 +71,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "author" })
 
     const stdWidth = 100 / 9
-
-
-
-    const [currentColWidths, setCurrentColWidths] = useState<{ [T in keyof RichQuote]: number }>({
+    const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({
         'id': stdWidth * 1 / 3,
         'preamble': stdWidth * 5 / 3,
         'quote': stdWidth * 14 / 6,
@@ -82,26 +83,13 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         'message_date': stdWidth * 4 / 6 - stdWidth * 1/10
     })
 
-    const [colWidths, setColWidths] = useState(currentColWidths)
     const scrollbarSize = useScrollbarSize()
     const { toast } = useToast()
-
-    const elementRef = useRef<HTMLDivElement>(null);
-    const [width, setWidth] = useState<number>(0);
-
-    useEffect(() => {
-        if (elementRef.current) {
-            const elementWidth = elementRef.current.offsetWidth;
-            setWidth(elementWidth);
-        }
-    }, [elementRef]);
-
 
     function setColWidthsW(key: keyof RichQuote, s: number) {
         setColWidths(prevState => {
             const newObj = { ...prevState };
             newObj[key] = s;
-            //console.log("Resized " + key + " to: " + s );
             return newObj;
         });
 
@@ -271,14 +259,11 @@ function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, o
     onEditClose?: () => void
 }) {
 
-    const [dialogOpen, setDialogOpen] = useState(false);
-
-
     return (
         <Dialog>
             <DialogTrigger className={`w-full ${className}`} style={style}>
                 <HoverCard>
-                    <HoverCardTrigger>
+                    <HoverCardTrigger asChild>
                         <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
                             {
                                 Object.keys(rowData).map((key, index) => {
@@ -386,8 +371,6 @@ function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, o
         </Dialog>
     );
 }
-
-
 
 type FilterOptions = {
     sort?: "Ascending" | "Descending" | "None",
