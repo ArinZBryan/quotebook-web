@@ -64,7 +64,6 @@ export function EditForm({ rowData }: { rowData: RichQuote }) {
     }, [])
 
     const [showWarnings, setShowWarnings] = useState(false)
-
     return (<form>
         <Button type="button" variant={"link"} asChild>
             <a

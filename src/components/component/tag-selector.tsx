@@ -8,6 +8,11 @@ import Fuse from 'fuse.js'
 import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 
+function includeIfExists<T>(original: T[], newItem : T | undefined | null) : T[] {
+    if (newItem == undefined || newItem == null) return original
+    else return original.concat(newItem)
+}
+
 export function TagSelector(props: {
     showLabel: boolean,
     includeAuthor?: Author,
@@ -18,13 +23,15 @@ export function TagSelector(props: {
     onSelectedTagsDecreased?: (tagRemoved: Tag) => void,
 }) {
     const [sortedTags, setSortedTags] = React.useState<Tag[]>([])
-    const [selectedTags, setSelectedTags] = React.useState<Tag[]>(props.includeAuthor != undefined ? [props.includeAuthor.tag] : [])
+    const [selectedTags, setSelectedTags] = React.useState<Tag[]>(props.defaultTags != undefined ? props.defaultTags.filter((tag) => tag.id != props.includeAuthor?.tag.id) : [])
 
     useEffect(() => {
         if (props.includeAuthor?.tag == undefined) { return; }
         const tagAlreadyThere = selectedTags.includes(props.includeAuthor?.tag)
         setSelectedTags(tagAlreadyThere ? selectedTags : selectedTags.concat([props.includeAuthor?.tag]))
     }, [props.includeAuthor])
+
+    console.log({'selectedTags' : selectedTags, 'defaultTags' : props.defaultTags})
 
     return (<>
         {
@@ -41,19 +48,21 @@ export function TagSelector(props: {
                         props.includeAuthor != undefined ? <div className="m-1"><AuthorTagStd author={props.includeAuthor} /></div> : ""
                     }
                     {
-                        (selectedTags.filter((t) => !(props.includeAuthor?.tag == t)))
+                        (selectedTags.filter((t) => !(props.includeAuthor?.tag.id == t.id)))
                             .map((tag, i) =>
                                 <TagAdmin
                                     tag={tag}
                                     onAdd={(t) => {
-                                        setSelectedTags(selectedTags.concat([t]));
-                                        props.onSelectedTagsChanged?.call({}, selectedTags);
+                                        const newVal = selectedTags.concat([t]).filter((tag) => tag.id != props.includeAuthor?.tag.id) 
+                                        props.onSelectedTagsChanged?.call({}, newVal);
                                         props.onSelectedTagsIncreased?.call({}, t);
+                                        setSelectedTags(newVal);
                                     }}
                                     onRemove={(t) => {
-                                        setSelectedTags(selectedTags.filter((tag) => tag.id != t.id));
-                                        props.onSelectedTagsChanged?.call({}, selectedTags);
+                                        const newVal = selectedTags.filter((tag) => tag.id != t.id).filter((tag) => tag.id != props.includeAuthor?.tag.id) 
+                                        props.onSelectedTagsChanged?.call({}, newVal);
                                         props.onSelectedTagsDecreased?.call({}, t);
+                                        setSelectedTags(newVal);
                                     }}
                                     startState="unpin"
                                     className="m-1" key={i}
