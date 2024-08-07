@@ -2,7 +2,7 @@
 import { db, db_tables } from "@/schema"
 import { eq } from "drizzle-orm"
 
-export async function respond(newData: formData): Promise<{ successful: boolean, reason: string } | void> {
+export async function respond(newData: formData): Promise<{ successful: boolean, reason: string }> {
     let res = {
         'successful': true,
         'reason': ""
@@ -14,7 +14,7 @@ export async function respond(newData: formData): Promise<{ successful: boolean,
             console.log(reason)
             res = {
                 'successful': false,
-                'reason': "Unknown Database Row Deletion Faliure"
+                'reason': reason
             }
         })
     

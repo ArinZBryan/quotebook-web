@@ -201,28 +201,43 @@ export function Authors({ static_data }: {
                             You have {modifiedAuthors.length} unsaved change(s)
                         </AlertDescription>
                     </div>
-                    <form onSubmit={(e) => {
+                    <form onSubmit={async (e) => {
                         e.preventDefault()
-                        modifiedAuthors.forEach((v) => {
+                        const results = await Promise.all(modifiedAuthors.map((v) => {
                             if (v.type === "new") {
                                 api.add.author({
                                     'preferred_name' : v.target.preferred_name,
                                     'search_text' : v.target.search_text,
                                     'tag' : v.target.tag
                                 })
+                                return Promise.resolve({
+                                    'successful' : true,
+                                    'reason' : ""
+                                })
                             } else if (v.type === "modify") {
-                                api.modify.author({
+                                return api.modify.author({
                                     'id' : v.target.id,
                                     'preferred_name' : v.target.preferred_name,
                                     'search_text' : v.target.search_text.split(",").map((v) => v.trim()),
                                     'tag' : v.target.tag
                                 })
                             } else if (v.type === "delete") {
-                                api.delete.author({
+                                return api.delete.author({
                                     'id' : v.target.id
                                 })
+                            } 
+                            return Promise.resolve({
+                                'successful' : false,
+                                'reason' : "Unknown Method"
+                            })
+                        }))
+                        results.forEach((v) => {if (!v.successful) toast("Unsuccessful Operation", {
+                            description: v.reason,
+                            action: {
+                                label: "Dismiss",
+                                onClick: () => {}
                             }
-                        })
+                        })})
                         clearCachesByServerAction("/admin/users")
                         setModifedAuthors([])
                     }}>
