@@ -101,7 +101,7 @@ export function TagAdmin({tag, onRemove, onAdd, overrideColor, startState, class
     )
 }
 
-export function AuthorTagStd({author, overrideColor, className}: {author?: Author, overrideColor? : string, className?: string}) : JSX.Element
+export function AuthorTagStd({author, overrideColor, className}: {author: Author, overrideColor? : string, className?: string}) : JSX.Element
 {
     let tag : Tag | null = null;
     if (author == undefined) {
@@ -134,7 +134,7 @@ export function AuthorTagStd({author, overrideColor, className}: {author?: Autho
                     <div className="text-xl">{tag.title}</div>
                     <div style={{color:`#${colours[tag.category as keyof typeof colours]}`}}>{tag.category}</div>
                     <div className="h-3"></div>
-                    <div className="text-gray-500">#{tag.id}</div>
+                    <div className="text-gray-500">#{author.id}</div>
                 </div>
             </HoverCardContent>
         </HoverCard>
@@ -179,7 +179,7 @@ export function AuthorTagAdmin({author, onRemove, onAdd, overrideColor, startSta
                     <div className="text-xl">{tag.title}</div>
                     <div style={{color:`#${colours[tag.category as keyof typeof colours]}`}}>{tag.category}</div>
                     <div className="h-3"></div>
-                    <div className="text-gray-500">#{tag.id}</div>
+                    <div className="text-gray-500">#{author.id}</div>
                     
                 </div>
             </HoverCardContent>

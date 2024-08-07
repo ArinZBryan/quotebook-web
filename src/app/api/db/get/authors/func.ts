@@ -13,6 +13,6 @@ export async function getAuthors(limit?: number): Promise<Author[]>
         .innerJoin(db_tables.tags, eq(db_tables.authors.tag, db_tables.tags.id))
         .limit(lim != -1 ? lim : -1)
 
-    return authors_selected.map(row => {return {'id': row.authors.tag, 'preferred_name': row.authors.preferred_name, 'search_text': row.authors.search_text, 'tag':{'id': row.authors.tag, 'category': row.tags.category, 'title': row.tags.title}} as Author})
+    return authors_selected.map(row => {return {'id': row.authors.id, 'preferred_name': row.authors.preferred_name, 'search_text': row.authors.search_text, 'tag':{'id': row.authors.tag, 'category': row.tags.category, 'title': row.tags.title}} as Author})
 }
 
