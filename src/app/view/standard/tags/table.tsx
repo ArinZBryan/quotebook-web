@@ -8,9 +8,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { FixedSizeList as List } from 'react-window'
 import { FilterOptionsPanel } from './filteroptions'
 import { Tag } from "@/app/api/db/types";
-import { CSSProperties, useState } from 'react'
+import { CSSProperties, useState, useEffect } from 'react'
 import { useToast } from "@/components/ui/use-toast";
-import useScrollbarSize from 'react-scrollbar-size';
 
 
 
@@ -38,7 +37,11 @@ export function Table({ data }: { data: Tag[] }) {
         'title': stdWidth
     })
 
-    const scrollbarSize = useScrollbarSize()
+    const [scrollbarSize, setScrollbarSize] = useState(0);
+
+    useEffect(() => {
+        setScrollbarSize(window.innerWidth - document.documentElement.clientWidth);
+    }, [])
     const { toast } = useToast()
 
     function setColWidthsW(key: keyof Tag, s: number) {
@@ -56,7 +59,7 @@ export function Table({ data }: { data: Tag[] }) {
         <>
             <Toaster />
             <div className="w-full">
-                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize.width }}>
+                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize }}>
                     <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
                         <div className="flex h-full items-center justify-center p-6">
                             <div className="flex justify-center flex-grow">

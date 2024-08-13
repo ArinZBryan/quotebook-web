@@ -20,11 +20,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { RichQuote } from "@/app/api/db/types";
 import { FixedSizeList as List } from 'react-window'
 import { FilterOptionsPanel } from './filteroptions'
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle2Icon, EyeOffIcon } from "lucide-react";
 import { TagStd } from "@/components/component/tag";
-import useScrollbarSize from "react-scrollbar-size";
 
 interface TableProps {
     data: RichQuote[],
@@ -71,7 +70,11 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         'message_date': stdWidth * 4 / 6
     })
 
-    const scrollbarSize = useScrollbarSize()
+    const [scrollbarSize, setScrollbarSize] = useState(0);
+
+    useEffect(() => {
+        setScrollbarSize(window.innerWidth - document.documentElement.clientWidth);
+    }, [])
     const { toast } = useToast()
 
     function setColWidthsW(key: keyof RichQuote, s: number) {
@@ -89,7 +92,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         <>
             <Toaster />
             <div className="w-full">
-                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize.width }}>
+                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize }}>
                     <ResizablePanel onResize={(b) => { setColWidthsW("preamble", b) }} defaultSize={colWidths.preamble}>
                         <div className="flex h-full items-center justify-center p-6">
                             <div className="flex justify-center flex-grow">

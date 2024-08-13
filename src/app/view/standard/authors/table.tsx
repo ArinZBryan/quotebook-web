@@ -22,8 +22,7 @@ import { FilterOptionsPanel } from './filteroptions'
 import { Toaster } from "@/components/ui/toaster";
 import { Author } from "@/app/api/db/types";
 import { AuthorTagStd, TagStd } from "@/components/component/tag";
-import useScrollbarSize from "react-scrollbar-size";
-import { CSSProperties, useState } from 'react'
+import { CSSProperties, useState, useEffect } from 'react'
 import { useToast } from "@/components/ui/use-toast";
 import { EyeOffIcon } from "lucide-react";
 
@@ -56,7 +55,11 @@ export function Table({ data }: { data: Author[] }) {
         'tag': stdWidth 
     });
 
-    const scrollbarSize = useScrollbarSize()
+    const [scrollbarSize, setScrollbarSize] = useState(0);
+
+    useEffect(() => {
+        setScrollbarSize(window.innerWidth - document.documentElement.clientWidth);
+    }, [])
     const { toast } = useToast()
 
     function setColWidthsW(key: keyof Author, s: number) {
@@ -73,7 +76,7 @@ export function Table({ data }: { data: Author[] }) {
         <>
             <Toaster />
             <div className="w-full">
-                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize.width }}>
+                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize }}>
                     <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
                         <div className="flex h-full items-center justify-center p-6">
                             <div className="flex justify-center flex-grow">
