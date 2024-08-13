@@ -63,7 +63,7 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
     if (smallWindow) {
         return <Grid cols={1} gap={3} className='p-3'>
             <GridElement className='w-full h-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 1, row: 0, column: 0 }}>
-                <h1 className='text-[2.5rem] overflow-hidden'>Hello, {userauthor?.preferred_name ?? session?.user.name ?? "[Not Logged In]"}</h1>
+                <h1 className='text-5xl overflow-hidden'>Hello, {userauthor?.preferred_name ?? session?.user.name ?? "[Not Logged In]"}</h1>
             </GridElement>
             <GridElement className='w-full h-full  border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 2, row: 1, column: 0 }}>
                 <div className='text-gray-600 flex flex-col space-y-1'>
@@ -93,7 +93,7 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
     } else {
         return <Grid cols={2} gap={3} className='p-3'>
             <GridElement className='w-full h-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 2, height: 1, row: 0, column: 0 }}>
-                <h1 className='text-[2.5rem] overflow-hidden'>Hello, {userauthor?.preferred_name ?? session?.user.name}</h1>
+                <h1 className='text-5xl overflow-hidden'>Hello, {userauthor?.preferred_name ?? session?.user.name}</h1>
             </GridElement>
             <GridElement className='w-full h-full  border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 2, row: 1, column: 0 }}>
                 <div className='text-gray-600 flex flex-col space-y-1'>

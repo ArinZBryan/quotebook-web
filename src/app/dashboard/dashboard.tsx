@@ -58,7 +58,9 @@ export async function Dashboard() {
         }
     };
 
-    return <DashboardClient userauthor={userauthor} data={data} session={session} your_quotes={your_quotes}/>
+    return <div  className='text-2xl'>
+        <DashboardClient userauthor={userauthor} data={data} session={session} your_quotes={your_quotes}/>
+    </div>
 
 }
 
