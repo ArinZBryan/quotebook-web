@@ -37,11 +37,11 @@ export function TitleBar() {
         <div className="flex justify-between h-14 items-center px-4 border-b md:h-20 md:px-6">
             <Link className="flex items-center gap-2 font-semibold" href="/">
                 <MessageCircleIcon className="h-5 w-5" />
-                <span>Quotebook</span>
+                <span className="hidden sm:block">Quotebook</span>
             </Link>
             <div className="" />
             {!hidePages ?
-                (<div className="flex flex-row overflow-visible">
+                (<div className="flex flex-row overflow-visible pr-4 md:pr-0">
                     <div className="hidden md:pr-5 md:block">
                         <NavButtons userIsAdmin={session?.user.admin == "true" ? true : false} />
                     </div>
@@ -142,12 +142,14 @@ function NavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
     )
 }
 
+
+const condensedNavButtonStyle = "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
 function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
     return (<NavigationMenu>
         <NavigationMenuList>
             {!userIsAdmin ? null :
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger><BlocksIcon /></NavigationMenuTrigger>
+                    <NavigationMenuTrigger className="px-2"><BlocksIcon className="w-4 sm:w-6"/></NavigationMenuTrigger>
                     <NavigationMenuContent className="z-[20]">
                         <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
                             <ListItem href={"/admin/unverified"} title="Unverified Quotes">
@@ -167,7 +169,7 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                 </NavigationMenuItem>
             }
             <NavigationMenuItem>
-                <NavigationMenuTrigger><TableIcon /></NavigationMenuTrigger>
+                <NavigationMenuTrigger className="px-2"><TableIcon className="w-4 sm:w-6"/></NavigationMenuTrigger>
                 <NavigationMenuContent className="z-[20]">
                     <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
                         <ListItem href={userIsAdmin ? "/view/admin/authors" : "/view/standard/authors"} title="Authors">
@@ -183,7 +185,7 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                 </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-                <NavigationMenuTrigger><PieChartIcon /></NavigationMenuTrigger>
+                <NavigationMenuTrigger className="px-2"><PieChartIcon className="w-4 sm:w-6"/></NavigationMenuTrigger>
                 <NavigationMenuContent className="z-[20]">
                     <ul className="grid gap-3 p-6 w-72 lg:grid-rows-[.75fr_1fr]">
                         <ListItem href="/stats/authors" title="Authors">
@@ -197,8 +199,8 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
             </NavigationMenuItem>
             <NavigationMenuItem>
                 <Link href="/" legacyBehavior passHref>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <LayoutDashboardIcon />
+                    <NavigationMenuLink className={condensedNavButtonStyle}>
+                        <LayoutDashboardIcon className="w-4 sm:w-6"/>
                     </NavigationMenuLink>
                 </Link>
             </NavigationMenuItem>
@@ -206,6 +208,7 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
     </NavigationMenu>
     )
 }
+
 
 const ListItem = React.forwardRef<
     React.ElementRef<"a">,
