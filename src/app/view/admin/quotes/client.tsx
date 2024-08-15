@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { RichQuote } from "@/app/api/db/types"
 import { ScrollToTop } from "@/components/component/scroll-to-top"
 import { Table as QuotesTable } from "./table"
-import { SkeletonTable } from "./skeleton-table"
+import { Toaster } from "@/components/ui/toaster";
 import { Reload } from "@/components/component/reload"
 
 export function InteractivePage() {
@@ -17,6 +17,7 @@ export function InteractivePage() {
     }, [])
 
     return <>
+        <Toaster />
         <QuotesTable 
             data={quotes} 
             onTableInvalid={async () => {

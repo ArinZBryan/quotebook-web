@@ -18,24 +18,25 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { 
-    Card, 
-    CardContent, 
-    CardDescription, 
-    CardFooter, 
-    CardHeader 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/toaster";
 import { RichQuote } from "@/app/api/db/types";
 import { FixedSizeList as List } from 'react-window';
 import { FilterOptionsPanel } from './filteroptions';
 import { EditForm } from "./editform";
 import { TagStd } from "@/components/component/tag";
-import { CSSProperties, useMemo, useState } from 'react'
+import { CSSProperties, useMemo, useState, useEffect, useRef } from 'react'
 import { useToast } from "@/components/ui/use-toast";
-import useScrollbarSize from 'react-scrollbar-size';
-import { CheckCircle2Icon } from "lucide-react";
+import useWindowDimensions from "@/lib/useWindowDimensions";
+import useToggle from "@/lib/useToggle";
+import { CheckCircle2Icon, ListCollapseIcon } from "lucide-react";
+import { ImperativePanelHandle } from "react-resizable-panels";
 
 
 interface TableProps {
@@ -56,6 +57,11 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         if (options.contains == undefined) { return (a) => false; }
         return (a: RichQuote) => {
             if (options.col == 'author') {
+                try {
+                    const test = a.author.preferred_name
+                } catch (e) {
+                    console.log(e)
+                }
                 return options.contains!.test(String(a.author.preferred_name))
             }
             if (options.col == 'tags') {
@@ -70,6 +76,10 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" })
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "author" })
 
+    const pageDims = useWindowDimensions()
+    const windowWidth = (pageDims.width == undefined || isNaN(pageDims.width!)) ? 600 : pageDims.width
+    const smallWindow = (windowWidth! < 470)
+
     const stdWidth = 100 / 9
     const [colWidths, setColWidths] = useState<{ [T in keyof RichQuote]: number }>({
         'id': stdWidth * 1 / 3,
@@ -78,13 +88,19 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
         'author': stdWidth * 11 / 12,
         'date': stdWidth * 5 / 12,
         'confirmed_date': 0,
-        'tags': stdWidth * 5 / 3 + stdWidth * 2 / 10,
+        'tags': stdWidth * 56 / 30,
         'message_id': stdWidth * 9 / 10,
-        'message_date': stdWidth * 4 / 6 - stdWidth * 1/10
+        'message_date': stdWidth * 17 / 30
     })
+    const {value: disabledPanelControls, toggle: toggleDisabledControls} = useToggle(false)
 
-    const scrollbarSize = useScrollbarSize()
-    const { toast } = useToast()
+    const [scrollbarSize, setScrollbarSize] = useState(0);
+
+
+    useEffect(() => {
+        setScrollbarSize(window.innerWidth - document.documentElement.clientWidth);
+
+    }, [])
 
     function setColWidthsW(key: keyof RichQuote, s: number) {
         setColWidths(prevState => {
@@ -101,133 +117,86 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
 
     return (
         <>
-            <Toaster />
-            <div className="w-full">
-                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize.width }}>
-                    <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }} defaultSize={colWidths.id}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">ID</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                setSortOptions({ sort: v.direction, col: "id" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by ID`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(b) => { setColWidthsW("preamble", b) }} defaultSize={colWidths.preamble}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Preamble</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preamble" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(c) => { setColWidthsW("quote", c) }} defaultSize={colWidths.quote}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Quote</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "quote" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(d) => { setColWidthsW("author", d) }} defaultSize={colWidths.author}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Author</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "author" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(e) => { setColWidthsW("date", e) }} defaultSize={colWidths.date}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Date</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                setSortOptions({ sort: v.direction, col: "date" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "date" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by date`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(g) => { setColWidthsW("message_id", g) }} defaultSize={colWidths.message_id}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Message ID</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                setSortOptions({ sort: v.direction, col: "message_id" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "message_id" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by message_id`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(f) => { setColWidthsW("message_date", f) }} defaultSize={colWidths.message_date}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Message Date</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
-                                setSortOptions({ sort: v.direction, col: "message_date" });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by message date`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(f) => { setColWidthsW("tags", f) }} defaultSize={colWidths.tags}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Tags</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tags" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
+            <div className="w-full text-xs sm:text-md">
+                <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize + 1 }}>
+                    <TableHeader
+                        column={"id"}
+                        columnName={"ID"}
+                        defaultSize={colWidths.id}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions, 'sort' : setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"preamble"}
+                        columnName={"Preamble"}
+                        defaultSize={colWidths.preamble}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"quote"}
+                        columnName={"Quote"}
+                        defaultSize={colWidths.quote}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"author"}
+                        columnName={"Author"}
+                        defaultSize={colWidths.author}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"date"}
+                        columnName={"Date"}
+                        defaultSize={colWidths.date}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions, 'sort' : setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"message_id"}
+                        columnName={"Message ID"}
+                        defaultSize={colWidths.message_id}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"message_date"}
+                        columnName={"Message Date"}
+                        defaultSize={colWidths.message_date}
+                        handle={true}
+                        disableHandle={disabledPanelControls}
+                        onToggleDisabledControls={toggleDisabledControls}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions, 'sort': setFilterOptions }}
+                    />
+                    <TableHeader
+                        column={"tags"}
+                        columnName={"Tags"}
+                        defaultSize={colWidths.tags}
+                        handle={false}
+                        onResize={setColWidthsW}
+                        setFilterOptions={{ 'filter': setFilterOptions }}
+                    />
                 </ResizablePanelGroup>
                 <List
                     height={775}
@@ -237,10 +206,10 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                 >
                     {
                         ({ index, style }) => (
-                            <TableRow 
-                                style={style} 
-                                rowData={selectedData[index]} 
-                                colWidths={colWidths} 
+                            <TableRow
+                                style={style}
+                                rowData={selectedData[index]}
+                                colWidths={colWidths}
                                 className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible h-full`}
                             />
                         )
@@ -251,10 +220,53 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
     )
 }
 
+function TableHeader(props: {
+    column: keyof RichQuote,
+    columnName?: string,
+    defaultSize: number,
+    setFilterOptions: {
+        sort?: (value: FilterOptions) => void,
+        filter?: (value: FilterOptions) => void,
+    }
+    handle: boolean,
+    onToggleDisabledControls?: () => void,
+    disableHandle? : boolean,
+    onResize: (key: keyof RichQuote, s: number) => void,
+}) {
+
+    const { toast } = useToast()
+
+    return <>
+        <ResizablePanel
+            onResize={(f) => { props.onResize(props.column, f) }}
+            defaultSize={props.defaultSize}
+        >
+            <div className="flex h-full items-center justify-center p-6">
+                <div className="flex justify-center flex-grow">
+                    <span className="font-semibold">{props.columnName ?? props.column}</span>
+                </div>
+                <FilterOptionsPanel
+                    canBeSorted={props.setFilterOptions.sort !== undefined}
+                    onOpen={() => { props.onToggleDisabledControls?.call({}) }}
+                    onClose={() => { props.onToggleDisabledControls?.call({}) }}
+                    onSubmit={(v) => {
+                        props.setFilterOptions.filter?.call({}, { contains: new RegExp(v.contains, "i"), col: props.column })
+                        props.setFilterOptions.sort?.call({}, { sort: v.direction, col: props.column })
+                        toast({
+                            description: `Filtered to contain: ${v.contains}`,
+                        });
+                    }}
+                />
+            </div>
+        </ResizablePanel>
+        {props.handle ? <ResizableHandle withHandle={!props.disableHandle} disabled={props.disableHandle} /> : "" }
+    </>
+}
+
 function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, onEditClose }: {
     rowData: T,
     colWidths: { [K in keyof T]: number },
-    className? : string,
+    className?: string,
     style: CSSProperties,
     onEditClose?: () => void
 }) {
@@ -264,7 +276,7 @@ function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, o
             <DialogTrigger className={`w-full ${className}`} style={style}>
                 <HoverCard>
                     <HoverCardTrigger asChild>
-                        <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
+                        <div className="flex items-center justify-center h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
                             {
                                 Object.keys(rowData).map((key, index) => {
                                     if (key == "confirmed_date") {
@@ -280,7 +292,7 @@ function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, o
                                                 break;
                                             }
                                         case "date":
-                                            innerhtml = <div className="flex flex-row gap-[0.125rem]">{rowData.date}{rowData.confirmed_date == "true" ? <CheckCircle2Icon className="text-gray-500 pt-[0.325rem] pb-[0.325rem]" /> : ""}</div>
+                                            innerhtml = <div className="flex flex-row gap-[0.125rem] justify-center items-center">{rowData.date}{rowData.confirmed_date == "true" ? <CheckCircle2Icon className="text-gray-500 pt-[0.325rem] pb-[0.325rem]" /> : ""}</div>
                                             break;
                                         case "tags":
                                             if (rowData.tags?.length == 0) {
@@ -304,6 +316,7 @@ function TableRow<T extends RichQuote>({ rowData, colWidths, className, style, o
                                             if (stringRepr.length > 50) { innerhtml = stringRepr.substring(0, 45) + " [...]" }
                                             else { innerhtml = stringRepr }
                                     }
+                                    if (colWidths[key as keyof T] == 0) { return "" }
                                     return (
                                         <span
                                             style={{

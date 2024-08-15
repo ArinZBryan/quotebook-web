@@ -15,13 +15,28 @@
 - [x] Stats page
     - [x] Collect detailed statistics per author
     - [x] Collect detailed statistics per tag
-- [ ] Integrate bot API into this next-project
-    - [ ] Merge git trees
-    - [ ] Make API publicly available
 - [x] Deploy to vercel
     - [x] Set up cron jobs for bot api
     - [x] Deploy git repo for vercel
     - [x] Test all features work
-- [ ] Move Whitelisted Users to DB Table
-- [ ] Add functionality: add users from admin panel
-- [ ] Add users to whitelist
+- [x] Move Whitelisted Users to DB Table
+- [x] Add functionality: add users from admin panel
+- [x] Add users to whitelist
+- [x] Figure out what's wrong with the IDs of authors I add
+
+## Bugfixes
+- [ ] Refresh Does Not Work  
+    - /view/admin/tags
+- [ ] Editing Tags Does Not Work
+    - /view/admin/tags
+- [ ] Tag Editing Dialogue Labels 'Title' as 'Preamble'
+    - /view/admin/tags
+- [ ] `TypeError: Cannot read properties of undefined (reading 'id')`
+    - /stats/authors
+- [ ] Column Controls Re-Enable when selecting another filter controls while one is open
+    - /view/admin/quotes
+- [ ] Column Controls need to be disabled when selectiong filter controls
+    - see /view/admin/quotes for implementation
+## Features
+- [x] Re-add table column hiding
+- [ ] Automatically hide columns on mobile
