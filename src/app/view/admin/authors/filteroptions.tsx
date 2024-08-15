@@ -28,7 +28,7 @@ const formSchema = z.object({
     contains: z.string()
 })
 
-export function FilterOptionsPanel({ canBeSorted = true, onDismiss = (values: z.infer<typeof formSchema>) => {} }) {
+export function FilterOptionsPanel({ canBeSorted = true, onSubmit = (values: z.infer<typeof formSchema>) => {} }) {
     const f = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -36,10 +36,6 @@ export function FilterOptionsPanel({ canBeSorted = true, onDismiss = (values: z.
             contains: ""
         }
     })
-
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        onDismiss(values)
-    }
 
     return (
         <Popover>

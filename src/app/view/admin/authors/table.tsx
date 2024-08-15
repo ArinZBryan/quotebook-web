@@ -92,7 +92,7 @@ export function Table({ data }: { data: Author[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">ID</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "id" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
                                 toast({
@@ -110,7 +110,7 @@ export function Table({ data }: { data: Author[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Preferred Name</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "preferred_name" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preferred_name" });
                                 toast({
@@ -128,7 +128,7 @@ export function Table({ data }: { data: Author[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">search_text</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "search_text" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "search_text" });
                                 toast({
@@ -146,7 +146,7 @@ export function Table({ data }: { data: Author[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Tags</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "tag" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tag" })
                                 toast({

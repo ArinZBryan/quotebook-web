@@ -75,7 +75,7 @@ export function Table({ data }: { data: Tag[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">ID</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "id" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
                                 toast({
@@ -93,7 +93,7 @@ export function Table({ data }: { data: Tag[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Category</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "category" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
@@ -110,7 +110,7 @@ export function Table({ data }: { data: Tag[] }) {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Title</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "title" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "title" })
                                 toast({

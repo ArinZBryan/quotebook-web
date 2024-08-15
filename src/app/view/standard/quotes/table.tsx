@@ -98,7 +98,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Preamble</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preamble" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
@@ -112,7 +112,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Quote</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "quote" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
@@ -127,7 +127,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Author</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "author" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
@@ -141,7 +141,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Date</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "date" });
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "date" })
                                 toast({
@@ -159,7 +159,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Message Date</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={true} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
                                 setSortOptions({ sort: v.direction, col: "message_date" });
                                 toast({
                                     description: `Sorted into ${v.direction} order by message date`,
@@ -173,7 +173,7 @@ export const Table: React.FC<TableProps> = ({ data, onTableInvalid }) => {
                             <div className="flex justify-center flex-grow">
                                 <span className="font-semibold">Tags</span>
                             </div>
-                            <FilterOptionsPanel canBeSorted={false} onDismiss={(v) => {
+                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
                                 setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tags" })
                                 toast({
                                     description: `Filtered to contain: ${v.contains}`,
