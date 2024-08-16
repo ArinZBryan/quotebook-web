@@ -52,7 +52,7 @@ export function InteractivePage({ static_data }: {
                             <AvatarFallback>{selectedUser.name?.split(" ").map((v) => v[0]).reduce((p, c) => p + c, "")}</AvatarFallback>
                         </Avatar>
                         {selectedUser.name}
-                        <AuthorTagStd author={selectedUser.linked_author ?? undefined} />
+                        <AuthorTagStd author={selectedUser.linked_author ?? {'id': -1, 'preferred_name': "[System] Author Missing", 'search_text': '', 'tag': {'id': -1, 'category': 'Person', 'title': "Tag Missing"}} as Author} />
                     </h2>
                     <p>#{selectedUser.id}</p>
                     <p className="flex flex-row gap-2">Email: {selectedUser.email}
