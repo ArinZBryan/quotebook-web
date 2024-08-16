@@ -108,7 +108,10 @@ export function Table({ data, onTableInvalid }: { data: Author[], onTableInvalid
                                 disableHandle={disabledPanelControls}
                                 onToggleDisabledControls={toggleDisabledControls}
                                 onResize={setColWidthsW}
-                                onHide={(column) => { setSelectedCols(selectedCols.difference(new Set([column]))) }}
+                                onHide={(column) => {
+                                    const newSet = new Set([...selectedCols].filter((x) => x != column))
+                                    setSelectedCols(newSet)
+                                }}
                                 setFilterOptions={{ 'filter': col.filter ? setFilterOptions : undefined, 'sort': col.sort ? setSortOptions : undefined }}
                                 order={idx}
                                 key={idx}
