@@ -50,7 +50,7 @@ export async function Dashboard() {
             labels: tag_data.map((v) => v.label),
             datasets: [
                 {
-                    label: '# of your apperance in peoples quotes',
+                    label: "# of your appearance in peoples' quotes",
                     data: tag_data.map((v) => v.value),
                     borderWidth: 1,
                 },
