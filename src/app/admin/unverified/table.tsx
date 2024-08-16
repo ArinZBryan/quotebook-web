@@ -100,6 +100,9 @@ function TableRow<T extends Partial<UnverifiedQuote>>({ rowData, colWidths }: { 
                         case 'message_date':
                             innerhtml = rowData.message_date!.substring(0,10);
                             break;
+                        case 'message_id':
+                            innerhtml = (String(rowData[key as keyof T]).substring(0,7) + "[...]");
+                            break;
                         default:
                             innerhtml = String(rowData[key as keyof T])
                             break;

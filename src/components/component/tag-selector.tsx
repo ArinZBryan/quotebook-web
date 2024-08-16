@@ -31,8 +31,6 @@ export function TagSelector(props: {
         setSelectedTags(tagAlreadyThere ? selectedTags : selectedTags.concat([props.includeAuthor?.tag]))
     }, [props.includeAuthor])
 
-    console.log({'selectedTags' : selectedTags, 'defaultTags' : props.defaultTags})
-
     return (<>
         {
             props.showLabel ? <Label htmlFor="tags" className="p-2">Tags</Label> : ""

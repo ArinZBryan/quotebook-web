@@ -1,20 +1,8 @@
-import { Suspense, } from "react"
-import { RichQuote } from "@/app/api/db/types"
 import { TitleBar } from "@/components/component/titlebar"
 import { SessionProvider } from "next-auth/react"
 import { ShowOnLogin } from "@/components/component/showonlogin"
-import { ScrollToTop } from "@/components/component/scroll-to-top"
-import { Table as QuotesTable } from "./table"
-import { SkeletonTable } from "./skeleton-table"
-import { Reload } from "@/components/component/reload"
-import { api, triggerServerSideReload } from "@/api"
 import { InteractivePage } from "./client"
 export default async function Page() {
-
-    let data: RichQuote[] = []
-
-    data = await api.get.richquotes()
-
     return <div className="h-dvh">
         <SessionProvider>
             <TitleBar />
@@ -23,7 +11,6 @@ export default async function Page() {
                     <InteractivePage/>
                 </div>
             </ShowOnLogin>
-
         </SessionProvider>
     </div>
 }

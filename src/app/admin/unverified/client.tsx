@@ -113,7 +113,7 @@ export function InteractivePage({ env_vars, static_data }: {
                 </form>
             </CardContent>
         </Card>
-        <div className="flex-shrink">
+        <div className="flex-shrink w-full">
             <Table data={quotes} onItemSelected={setSelectedQuote} />
         </div>
         

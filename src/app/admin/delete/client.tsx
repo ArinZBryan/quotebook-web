@@ -24,7 +24,7 @@ export function Tags({ static_data }: {
     const [modifiedTags, setModifedTags] = useState<{ type: "new" | "modify" | "delete", target: Tag }[]>([])
 
     return <div className="flex flex-col">
-        <div className="flex flex-row ">
+        <div className="flex flex-row flex-wrap">
             <Card className="p-4 min-w-96 h-fit">
                 <CardTitle>
                     Modify Tag
@@ -61,7 +61,7 @@ export function Tags({ static_data }: {
 
                 </CardContent>
             </Card>
-            <ScrollArea className="h-[80vh]">
+            <ScrollArea className="h-[80vh] pt-2 sm:pt-0">
                 <div className="flex flex-row flex-wrap">
                     {
                         static_data.tags.map((t, i) =>
@@ -128,7 +128,7 @@ export function Authors({ static_data }: {
     const [modifiedAuthors, setModifedAuthors] = useState<{ type: "new" | "modify" | "delete", target: Author }[]>([])
 
     return <div className="flex flex-col">
-        <div className="flex flex-row ">
+        <div className="flex flex-row flex-wrap">
             <Card className="p-4 min-w-96 h-fit">
                 <CardTitle>
                     Modify Author
@@ -179,7 +179,7 @@ export function Authors({ static_data }: {
                     </div>
                 </CardContent>
             </Card>
-            <ScrollArea className="h-[80vh]">
+            <ScrollArea className="h-[80vh] pt-2 sm:pt-0">
                 <div className="flex flex-row flex-wrap">
                     {
                         static_data.authors.map((a, i) =>

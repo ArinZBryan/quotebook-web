@@ -1,4 +1,5 @@
 "use client"
+import type { Author } from "@/app/api/db/types";
 import {
     ResizableHandle,
     ResizablePanel,
@@ -18,29 +19,30 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { 
-    Card, 
-    CardContent, 
-    CardDescription, 
-    CardFooter, 
-    CardHeader, 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
     CardTitle
 } from "@/components/ui/card";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { PopoverContent } from "@radix-ui/react-popover";
+import Slideover from "@/components/component/slideover"
 import { Button } from "@/components/ui/button";
-import { FixedSizeList as List } from 'react-window'
-import { FilterOptionsPanel } from './filteroptions'
+import { FixedSizeList as List } from 'react-window';
+import { FilterOptionsPanel } from '@/app/view/filteroptions';
 import { EditForm } from "./editform";
-import { Toaster } from "@/components/ui/toaster";
 import { AuthorTagStd, TagStd } from "@/components/component/tag";
-import { Author } from "@/app/api/db/types";
-
+import { FloatingHiddenColsList } from "@/app/view/hiddenColsList";
 import { CSSProperties, useState, useEffect } from 'react'
 import { useToast } from "@/components/ui/use-toast";
-import { CheckCircle2Icon } from "lucide-react";
+import useWindowDimensions from "@/lib/useWindowDimensions";
+import useToggle from "@/lib/useToggle";
 
 
-
-export function Table({ data }: { data: Author[] }) {
+export function Table({ data, onTableInvalid }: { data: Author[], onTableInvalid: () => void }) {
     function sortFunction(options: FilterOptions): (a: Author, b: Author) => number {
         let dir = 0;
         if (options.sort == undefined) { return () => 0; }
@@ -56,21 +58,33 @@ export function Table({ data }: { data: Author[] }) {
 
     const [sortoptions, setSortOptions] = useState<FilterOptions>({ sort: "Descending", col: "id" });
     const [filteroptions, setFilterOptions] = useState<FilterOptions>({ contains: new RegExp(""), col: "preferred_name" });
-    
-    const stdWidth = 100 / 4;
-    const [colWidths, setColWidths] = useState<{ [T in keyof Author]: number }>({ 
-        'id': stdWidth, 
-        'preferred_name': stdWidth, 
-        'search_text': stdWidth, 
-        'tag': stdWidth 
-    });
 
+    const pageDims = useWindowDimensions()
+    const windowWidth = (pageDims.width == undefined || isNaN(pageDims.width!)) ? 600 : pageDims.width
+    const smallWindow = (windowWidth! < 470)
     const [scrollbarSize, setScrollbarSize] = useState(0);
-
     useEffect(() => {
         setScrollbarSize(window.innerWidth - document.documentElement.clientWidth);
     }, [])
-    const { toast } = useToast()
+
+    const allKeys: Set<(keyof Author)> = new Set(['id', 'preferred_name', 'search_text', 'tag'])
+    const [selectedCols, setSelectedCols] = useState<Set<(keyof Author)>>(allKeys)
+    const hiddenCols = [...allKeys].filter(x => !selectedCols.has(x))
+
+    const [touchIsPrimaryInput, setTouchIsPrimaryInput] = useState(false);
+    useEffect(() => {
+        setTouchIsPrimaryInput((('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            ((navigator as any).msMaxTouchPoints > 0)))
+    })
+
+    const stdWidth = 100 / 4;
+    const [colWidths, setColWidths] = useState<{ [T in keyof Author]: number }>({
+        'id': stdWidth,
+        'preferred_name': stdWidth,
+        'search_text': stdWidth,
+        'tag': stdWidth
+    });
 
     function setColWidthsW(key: keyof Author, s: number) {
         setColWidths(prevState => {
@@ -81,95 +95,71 @@ export function Table({ data }: { data: Author[] }) {
         });
     }
 
+    const { value: disabledPanelControls, toggle: toggleDisabledControls } = useToggle(false)
+
     const selectedData = data.filter(containsFunction(filteroptions)).sort(sortFunction(sortoptions));
+
+    const colsConfig: { column: keyof Author, columnName: string, filter: boolean, sort: boolean }[] = [
+        { column: "id", columnName: "ID", filter: true, sort: true },
+        { column: "preferred_name", columnName: "Preferred Name", filter: true, sort: false },
+        { column: "search_text", columnName: "Aliases", filter: true, sort: false },
+        { column: "tag", columnName: "Tag", filter: true, sort: false },
+    ]
+
+    const selectedColConfigs = colsConfig.filter((v) => selectedCols.has(v.column))
+
+    const [rerenderHiddenColsList, setRerenderHiddenColsList] = useState(0)
+
     return (
         <>
-            <Toaster />
-            <div className="w-full">
+            <FloatingHiddenColsList
+                list={hiddenCols}
+                onItemRemoved={(i) => { setSelectedCols(selectedCols.add(i as keyof Author)); setRerenderHiddenColsList(rerenderHiddenColsList + 1) }}
+                rerender={rerenderHiddenColsList}
+            />
+            <div className="w-full text-xs sm:text-lg">
                 <ResizablePanelGroup direction="horizontal" style={{ paddingRight: scrollbarSize }}>
-                    <ResizablePanel onResize={(a) => { setColWidthsW("id", a) }}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">ID</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
-                                setSortOptions({ sort: v.direction, col: "id" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "id" });
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by ID`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(a) => { setColWidthsW("preferred_name", a) }}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Preferred Name</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
-                                setSortOptions({ sort: v.direction, col: "preferred_name" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "preferred_name" });
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by Preferred Name`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(a) => { setColWidthsW("search_text", a) }}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">search_text</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={true} onSubmit={(v) => {
-                                setSortOptions({ sort: v.direction, col: "search_text" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "search_text" });
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                                toast({
-                                    description: `Sorted into ${v.direction} order by Search Text`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle={true} />
-                    <ResizablePanel onResize={(g) => { setColWidthsW("tag", g) }}>
-                        <div className="flex h-full items-center justify-center p-6">
-                            <div className="flex justify-center flex-grow">
-                                <span className="font-semibold">Tags</span>
-                            </div>
-                            <FilterOptionsPanel canBeSorted={false} onSubmit={(v) => {
-                                setSortOptions({ sort: v.direction, col: "tag" });
-                                setFilterOptions({ contains: new RegExp(v.contains, "i"), col: "tag" })
-                                toast({
-                                    description: `Filtered to contain: ${v.contains}`,
-                                });
-                            }} />
-                        </div>
-                    </ResizablePanel>
+                    {
+                        selectedColConfigs.map((col, idx) =>
+                            <TableHeader
+                                column={col.column}
+                                columnName={col.columnName}
+                                defaultSize={colWidths[col.column]}
+                                handle={idx != selectedColConfigs.length - 1}
+                                disableHandle={disabledPanelControls}
+                                onToggleDisabledControls={toggleDisabledControls}
+                                onResize={setColWidthsW}
+                                onHide={(column) => { setSelectedCols(selectedCols.difference(new Set([column]))) }}
+                                setFilterOptions={{ 'filter': col.filter ? setFilterOptions : undefined, 'sort': col.sort ? setSortOptions : undefined }}
+                                order={idx}
+                                key={idx}
+                            />
+                        )
+                    }
                 </ResizablePanelGroup>
                 <List
-                    height={775}
+                    height={793}
                     itemCount={selectedData.length}
                     itemSize={55}
                     width={"100%"}
                 >
                     {
                         ({ index, style }) => (
-                            <TableRow 
-                                style={style} 
-                                rowData={selectedData[index]} 
-                                colWidths={colWidths} 
-                                className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible h-full`}
-                            />
+                            touchIsPrimaryInput ?
+                                <MobileTableRow
+                                    style={style}
+                                    rowData={selectedData[index]}
+                                    colWidths={colWidths}
+                                    hiddenCols={hiddenCols}
+                                    className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible h-full`}
+                                /> :
+                                <TableRow
+                                    style={style}
+                                    rowData={selectedData[index]}
+                                    colWidths={colWidths}
+                                    hiddenCols={hiddenCols}
+                                    className={`${index % 2 == 0 ? "bg-gray-300 dark:bg-gray-950" : ""} overflow-visible h-full`}
+                                />
                         )
                     }
                 </List>
@@ -177,12 +167,60 @@ export function Table({ data }: { data: Author[] }) {
         </>
     )
 }
-function TableRow<T extends Author>({ rowData, colWidths, className, style, onEditClose }: {
+
+function TableHeader(props: {
+    column: keyof Author,
+    columnName?: string,
+    defaultSize: number,
+    setFilterOptions: {
+        sort?: (value: FilterOptions) => void,
+        filter?: (value: FilterOptions) => void,
+    }
+    handle: boolean,
+    onToggleDisabledControls?: () => void,
+    disableHandle?: boolean,
+    onResize: (key: keyof Author, s: number) => void,
+    onHide: (column: keyof Author) => void,
+    order: number
+}) {
+
+    const { toast } = useToast()
+
+    return <>
+        <ResizablePanel
+            onResize={(f) => { props.onResize(props.column, f) }}
+            defaultSize={props.defaultSize}
+            order={props.order}
+        >
+            <div className="flex h-full items-center justify-center p-6">
+                <div className="flex justify-center flex-grow">
+                    <span className="font-semibold hover:line-through hover:cursor-pointer" onClick={() => { props.onHide(props.column) }}>{props.columnName ?? props.column}</span>
+                </div>
+                <FilterOptionsPanel
+                    canBeSorted={props.setFilterOptions.sort !== undefined}
+                    onOpen={() => { props.onToggleDisabledControls?.call({}) }}
+                    onClose={() => { props.onToggleDisabledControls?.call({}) }}
+                    onSubmit={(v) => {
+                        props.setFilterOptions.filter?.call({}, { contains: new RegExp(v.contains, "i"), col: props.column })
+                        props.setFilterOptions.sort?.call({}, { sort: v.direction, col: props.column })
+                        toast({
+                            description: `Filtered to contain: ${v.contains}`,
+                        });
+                    }}
+                />
+            </div>
+        </ResizablePanel>
+        {props.handle ? <ResizableHandle withHandle={!props.disableHandle} disabled={props.disableHandle} /> : ""}
+    </>
+}
+
+function TableRow<T extends Author>({ rowData, colWidths, className, style, onEditClose, hiddenCols }: {
     rowData: T,
     colWidths: { [K in keyof T]: number },
-    className? : string,
+    className?: string,
     style: CSSProperties,
-    onEditClose?: () => void
+    onEditClose?: () => void,
+    hiddenCols?: (keyof T)[]
 }) {
 
     return (
@@ -193,6 +231,7 @@ function TableRow<T extends Author>({ rowData, colWidths, className, style, onEd
                         <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
                             {
                                 Object.keys(rowData).map((key, index) => {
+                                    if (hiddenCols?.includes(key as keyof T)) { return "" }
                                     return <span style={{ width: colWidths[key as keyof T] + "%", paddingLeft: "0.5rem" }} key={index}>
                                         {
                                             key != 'tag' ? String(rowData[key as keyof T]) : <TagStd tag={rowData.tag!} />
@@ -213,15 +252,15 @@ function TableRow<T extends Author>({ rowData, colWidths, className, style, onEd
                                 </div>
                             </CardDescription>
                             <CardContent>
-                                <div className="text-xl flex flex-col">
+                                <div className="text-xl flex flex-col items-center">
                                     {rowData.preferred_name}
-                                    <AuthorTagStd author={rowData}/>
+                                    <AuthorTagStd author={rowData} />
                                 </div>
                             </CardContent>
                             <CardFooter>
                                 <div className="flex flex-col justify-center flex-grow">
                                     Also known as:
-                                    <div className="flex-grow flex flex-row flex-wrap justify-center">
+                                    <div className="flex-grow flex flex-row flex-wrap gap-2 justify-center">
                                         {rowData.search_text.split(",").map((n, i) => <span key={i}>{n}</span>)}
                                     </div>
                                 </div>
@@ -240,6 +279,88 @@ function TableRow<T extends Author>({ rowData, colWidths, className, style, onEd
                 <EditForm rowData={rowData} />
                 <DialogClose asChild>
                     <Button type="button" variant="secondary" onClick={() => { onEditClose?.call({}); }}>
+                        Close
+                    </Button>
+                </DialogClose>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function MobileTableRow<T extends Author>({ rowData, colWidths, className, style, onEditClose, hiddenCols }: {
+    rowData: T,
+    colWidths: { [K in keyof T]: number },
+    className?: string,
+    style: CSSProperties,
+    onEditClose?: () => void,
+    hiddenCols?: (keyof T)[]
+}) {
+
+    const [open, setOpen] = useState(false)
+
+    return (
+        <Dialog open={open}>
+            <DialogTrigger className={`w-full ${className}`} style={style}>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <div className="flex h-full p-2 overflow-visible hover:border-white hover:border border-transparent" >
+                            <Slideover originalContent={
+                                Object.keys(rowData).map((key, index) => {
+                                    if (hiddenCols?.includes(key as keyof T)) { return "" }
+                                    return <span style={{ width: colWidths[key as keyof T] + "%", paddingLeft: "0.5rem" }} key={index}>
+                                        {
+                                            key != 'tag' ? String(rowData[key as keyof T]) : <TagStd tag={rowData.tag!} />
+                                        }
+                                    </span>
+                                })
+                            } coverContent={
+                                <div className="bg-red-600 w-full h-full cursor-pointer overflow-hidden flex items-center justify-center">
+                                    Edit Author
+                                </div>}
+                                delay={500}
+                                className="w-full h-full"
+                                onConfirm={() => { setOpen(true) }}
+                            />
+                        </div>
+                        </PopoverTrigger>
+                        <PopoverContent asChild>
+                        <Card className="w-96">
+                            <CardTitle className="text-md">
+                                <div>Author</div>
+                            </CardTitle>
+                            <CardDescription>
+                                <div>
+                                    #{rowData.id}
+                                </div>
+                            </CardDescription>
+                            <CardContent>
+                                <div className="text-xl flex flex-col items-center">
+                                    {rowData.preferred_name}
+                                    <AuthorTagStd author={rowData} />
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <div className="flex flex-col justify-center flex-grow">
+                                    Also known as:
+                                    <div className="flex-grow flex flex-row flex-wrap gap-2 justify-center">
+                                        {rowData.search_text.split(",").map((n, i) => <span key={i}>{n}</span>)}
+                                    </div>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                        </PopoverContent>
+                        </Popover>
+            </DialogTrigger>
+            <DialogContent onInteractOutside={() => {setOpen(false);}} onCloseAutoFocus={() => {setOpen(false)}}>
+                <DialogHeader>
+                    <DialogTitle>Modify Entry</DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
+                <EditForm rowData={rowData} />
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary" onClick={() => { onEditClose?.call({}); setOpen(false) }}>
                         Close
                     </Button>
                 </DialogClose>
