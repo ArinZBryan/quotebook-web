@@ -7,7 +7,7 @@ export default async function Page() {
     return <div className="h-dvh">
         <SessionProvider>
             <TitleBar />
-            <ShowOnLogin adminOnly={true}>
+            <ShowOnLogin adminOnly={false}>
                 <div className="w-full">
                     <InteractivePage/>
                 </div>
