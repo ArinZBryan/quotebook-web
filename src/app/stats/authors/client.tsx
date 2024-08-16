@@ -87,13 +87,13 @@ export function InteractivePage(props: { rich_quotes: RichQuote[], authors: Auth
                             </GridElement>
                         }
                         <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 2, column: 0 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>Most Recent Quote From This Author</div>
+                            <div className='w-full text-xl flex flex-col items-center'>First Quote From This Author</div>
                             <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
                                 <div className='w-fit'>{RichQuoteToString(data.quotesTaggedWithTarget.last)}</div>
                             </div>
                         </GridElement>
                         <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 2, column: 1 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>First Quote From This Author</div>
+                            <div className='w-full text-xl flex flex-col items-center'>Most Recent Quote From This Author</div>
                             <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
                                 <div className='w-fit'>{RichQuoteToString(data.quotesTaggedWithTarget.first)}</div>
                             </div>
