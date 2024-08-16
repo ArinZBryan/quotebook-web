@@ -39,7 +39,7 @@ export function InteractivePage({ static_data }: {
                 {selectedUser == null ? "" : <>
                     <h2 className="flex flex-row gap-4 items-center text-2xl pb-1">
                         {selectedUser.discord_id}
-                        <AuthorTagStd author={selectedUser.linked_author ?? undefined} />
+                        <AuthorTagStd author={selectedUser.linked_author ?? {'id': -1, 'preferred_name': "[System] Author Missing", 'search_text': '', 'tag': {'id': -1, 'category': 'Person', 'title': "Tag Missing"}} as Author} />
                     </h2>
                     <p>#{selectedUser.id}</p>
                     <p>Administrator: {(selectedUser.make_admin ?? "false") + ""}</p>

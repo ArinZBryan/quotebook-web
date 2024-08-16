@@ -27,7 +27,7 @@ export function SelectAuthor({ defaultData, formSubmit, authors }: { defaultData
         <Dialog>
             <DialogTrigger>
                 <AuthorTagStd 
-                    author={formData ?? defaultData ?? undefined } 
+                    author={formData ?? defaultData ?? {'id': -1, 'preferred_name': "[System] Author Missing", 'search_text': '', 'tag': {'id': -1, 'category': 'Person', 'title': "Tag Missing"}} as Author } 
                 />
             </DialogTrigger>
             <DialogContent>
