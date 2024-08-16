@@ -93,7 +93,10 @@ export function Table({ data, onItemSelected }: { data: RichUser[], onItemSelect
                                 disableHandle={disabledPanelControls}
                                 onToggleDisabledControls={toggleDisabledControls}
                                 onResize={setColWidthsW}
-                                onHide={(column) => {setSelectedCols(selectedCols.difference(new Set([column])))}}
+                                onHide={(column) => {
+                                    const newSet = new Set([...selectedCols].filter((x) => x != column))
+                                    setSelectedCols(newSet)
+                                }}
                                 order={idx}
                                 key={idx}
                             />
