@@ -220,7 +220,7 @@ const ListItem = React.forwardRef<
                 <a
                     ref={ref}
                     className={
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gradient-to-br from-gray-900 to-gray-950"
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 from-gray-300 to-gray-200"
                     }
                     {...props}
                 >

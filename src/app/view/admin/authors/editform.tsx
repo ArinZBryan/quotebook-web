@@ -85,7 +85,7 @@ export function EditForm({ rowData }: { rowData: Author }) {
         }}>Submit Changes</Button>
         <AlertDialog>
             <AlertDialogTrigger>
-                <Button type="button" className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] w-full">
+                <Button type="button" className="w-full" variant={'destructive'}>
                     Delete Author
                 </Button>
             </AlertDialogTrigger>

@@ -63,7 +63,7 @@ export function EditForm({ rowData }: { rowData: Tag }) {
         }}>Submit</Button>
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className="!bg-gray-800 !text-white hover:!bg-[#1f2937CC] w-full">
+                <Button className="w-full" variant={'destructive'}>
                     Delete Tag
                 </Button>
             </AlertDialogTrigger>
