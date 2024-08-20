@@ -31,7 +31,7 @@ export function InteractivePage(props: { rich_quotes: RichQuote[], authors: Auth
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
 
-    const [selectedTag, setSelectedTag] = useState<Tag | null>({ 'category': 'Person', 'title': 'Arin', 'id': 7 })
+    const [selectedTag, setSelectedTag] = useState<Tag | null>(null)
 
     const data = analyseData(props, selectedTag)
 
