@@ -1,9 +1,13 @@
 "use client"
-import { redirect } from 'next/navigation'
 import { Author, RichQuote, Tag } from "@/app/api/db/types";
 import { Grid, GridElement } from '@/components/component/grid';
-import { TagStd } from "@/components/component/tag";
-import { BarChart, DoughnutChart, LineChart } from '@/components/component/charts-client';
+import { CartesianGrid, Line, LineChart, XAxis, Pie, PieChart } from "recharts"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
 import { SelectTag } from "./tag_select";
 import { useState } from "react";
 import {
@@ -15,7 +19,7 @@ import {
 } from "@/components/ui/carousel"
 import useWindowDimensions from '@/lib/useWindowDimensions';
 
-function RichQuoteToString(q : RichQuote) {
+function RichQuoteToString(q: RichQuote) {
     const preamble = q.preamble.length > 0 ? `[${q.preamble}]` : "";
     const quote = q.quote;
     const author = q.author.preferred_name;
@@ -27,56 +31,235 @@ export function InteractivePage(props: { rich_quotes: RichQuote[], authors: Auth
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
 
-    const [selectedTag, setSelectedTag] = useState<Tag | null>(null)
+    const [selectedTag, setSelectedTag] = useState<Tag | null>({ 'category': 'Person', 'title': 'Arin', 'id': 7 })
 
     const data = analyseData(props, selectedTag)
 
-    return <div className='p-3 pt-5 pb-5'>
-        <Grid cols={4} rows={2} gap={1} >
-            <GridElement className='text-3xl flex' pos={{ width: 4, height: 1, row: 0, column: 0 }}>
+    if ((windowWidth ?? 1100) < 1000) {
+        return <div className='p-3 pt-5 pb-5 flex flex-col gap-2'>
+            <div className='text-4xl pb-2 flex'>
                 <div className='pb-2'>Stats on:</div>
-                <SelectTag defaultData={selectedTag} formSubmit={(t) => { setSelectedTag(t) }} tags={props.tags}/>
+                <SelectTag defaultData={selectedTag} formSubmit={(t) => { setSelectedTag(t) }} tags={props.tags} />
+            </div>
+            {
+                selectedTag != null && data != null ?
+                    <>
+                        <div  className="flex flex-wrap justify-between gap-2">
+                            <div className='flex-grow border-gray-900 border-2 rounded-xl p-2 h-fit w-full sm:max-w-[47.5vw]'>
+                                <div className='text-2xl text-center'>Related Tags</div>
+                                <ChartContainer
+                                    config={data.commonlyFoundWith.chartConfig}
+                                    className="aspect-square"
+                                >
+                                    <PieChart>
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent hideLabel />}
+                                        />
+                                        <Pie
+                                            data={data.commonlyFoundWith.data}
+                                            dataKey="uses"
+                                            nameKey="authorName"
+                                            innerRadius={"50%"}
+                                        />
+                                    </PieChart>
+                                </ChartContainer>
+                            </div>
+                            <div className='flex-grow border-gray-900 border-2 rounded-xl p-2 h-fit w-full sm:max-w-[47.5vw]'>
+                                <div className='text-2xl text-center'>Tag usage per author</div>
+                                <ChartContainer
+                                    config={data.usagePerAuthor.chartConfig}
+                                    className="aspect-square"
+                                >
+                                    <PieChart>
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent hideLabel />}
+                                        />
+                                        <Pie
+                                            data={data.usagePerAuthor.data}
+                                            dataKey="uses"
+                                            nameKey="authorName"
+                                            innerRadius={"50%"}
+                                        />
+                                    </PieChart>
+                                </ChartContainer>
+                            </div>
+                        </div>
+                        <div className='border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center'>
+                            <div className='w-full text-2xl text-center'>Usage of this tag over time</div>
+                            <div className="w-full">
+                                <ChartContainer config={data.usageOverTime.chartConfig}>
+                                    <LineChart
+                                        data={data.usageOverTime.data}
+                                        margin={{
+                                            left: 24,
+                                            right: 24,
+                                            bottom: 24,
+                                            top: 24
+                                        }}
+                                    >
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis
+                                            dataKey="month"
+                                            tickLine={true}
+                                            axisLine={false}
+                                            tickMargin={20}
+                                            angle={-35}
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent hideLabel />}
+                                        />
+                                        <Line
+                                            dataKey="uses"
+                                            type="monotone"
+                                            strokeWidth={2}
+                                            dot={false}
+                                        />
+                                    </LineChart>
+                                </ChartContainer>
+                            </div>
+                        </div>
+                        <div className='border-gray-900 border-2 rounded-xl p-2 flex flex-col'>
+                            <div className='w-full text-2xl flex flex-col items-center'>Most Recent Usage of this Tag:</div>
+                            <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
+                                <div className='w-fit'>{RichQuoteToString(data.quotesTaggedWithTarget.last)}</div>
+                            </div>
+                        </div>
+                        <div className=' border-gray-900 border-2 rounded-xl p-2 flex flex-col'>
+                            <div className='w-full text-2xl flex flex-col items-center'>First Use of this Tag:</div>
+                            <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
+                                <div className=''>{RichQuoteToString(data.quotesTaggedWithTarget.first)}</div>
+                            </div>
+                        </div>
+                        <div className='border-gray-900 border-2 rounded-xl p-2'>
+                            <div className='w-full text-xl text-center'>All Usages of this Tag</div>
+                            <div className='flex flex-col items-center justify-center' >
+                                <Carousel className='max-w-[75%]'>
+                                    <CarouselContent>
+                                        {
+                                            data.quotesTaggedWithTarget.all.map((q, i) =>
+                                                <CarouselItem key={i} className='w-fit flex flex-col items-center justify-center'>
+                                                    <div>{RichQuoteToString(q)}</div>
+                                                </CarouselItem>
+                                            )
+                                        }
+                                    </CarouselContent>
+                                    <CarouselPrevious />
+                                    <CarouselNext />
+                                </Carousel>
+                            </div>
+                        </div>
+                    </>
+                    : <></>
+            }
+        </div >
+    }
+
+    return <div className='p-3 pt-5 pb-5'>
+        <Grid cols={4} rows={2} gap={1} className='w-full text-2xl'>
+            <GridElement className='text-4xl pb-2 flex' pos={{ width: 4, height: 1, row: 0, column: 0 }}>
+                <div className='pb-2'>Stats on:</div>
+                <SelectTag defaultData={selectedTag} formSubmit={(t) => { setSelectedTag(t) }} tags={props.tags} />
             </GridElement>
             {
                 selectedTag != null && data != null ?
                     <>
-                        <GridElement className='w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 1, height: 1, row: 1, column: 0 }}>
-                            <div className='text-xl'>Related Tags</div>
-                            <div className='' style={{ maxWidth: (windowWidth ?? 100) / 4 + 200 }}>
-                                <DoughnutChart data={data.commonlyFoundWith} />
+                        <GridElement className='border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 1, height: 1, row: 1, column: 0 }}>
+                            <div className='text-3xl'>Related Tags</div>
+                            <ChartContainer
+                                config={data.commonlyFoundWith.chartConfig}
+                                className="flex-grow"
+                            >
+                                <PieChart margin={{ 'bottom': 0, 'left': 0, 'right': 0, 'top': 0 }}>
+                                    <ChartTooltip
+                                        cursor={false}
+                                        content={<ChartTooltipContent hideLabel />}
+                                    />
+                                    <Pie
+                                        data={data.commonlyFoundWith.data}
+                                        dataKey="uses"
+                                        nameKey="tag"
+                                        innerRadius={60}
+                                    />
+                                </PieChart>
+                            </ChartContainer>
+                        </GridElement>
+                        <GridElement className='relative border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 1, height: 1, row: 2, column: 0 }}>
+                            <div className='text-3xl'>Tag Usage By Author</div>
+                            <ChartContainer
+                                config={data.usagePerAuthor.chartConfig}
+                                className="flex-grow"
+                            >
+                                <PieChart>
+                                    <ChartTooltip
+                                        cursor={false}
+                                        content={<ChartTooltipContent hideLabel />}
+                                    />
+                                    <Pie
+                                        data={data.usagePerAuthor.data}
+                                        dataKey="uses"
+                                        nameKey="authorName"
+                                        innerRadius={"50%"}
+                                    />
+                                </PieChart>
+                            </ChartContainer>
+                        </GridElement>
+                        <GridElement className='border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 3, height: 2, row: 1, column: 1 }}>
+                            <div className='w-full text-3xl text-center'>Usage of this tag over time</div>
+                            <div className="w-full">
+                                <ChartContainer config={data.usageOverTime.chartConfig}>
+                                    <LineChart
+                                        data={data.usageOverTime.data}
+                                        margin={{
+                                            left: 24,
+                                            right: 24,
+                                            bottom: 24,
+                                            top: 24
+                                        }}
+                                    >
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis
+                                            dataKey="month"
+                                            tickLine={true}
+                                            axisLine={false}
+                                            tickMargin={20}
+                                            angle={-35}
+                                        />
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent hideLabel />}
+                                        />
+                                        <Line
+                                            dataKey="uses"
+                                            type="monotone"
+                                            strokeWidth={2}
+                                            dot={false}
+                                        />
+                                    </LineChart>
+                                </ChartContainer>
                             </div>
                         </GridElement>
-                        <GridElement className='w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 1, height: 1, row: 1, column: 1 }}>
-                            <div className='text-xl'>Tag Usage By Author</div>
-                            <div className='' style={{ maxWidth: (windowWidth ?? 100) / 4 + 200 }}>
-                                <DoughnutChart data={data.usagePerAuthor} />
-                            </div>
-                        </GridElement>
-                        <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col items-center' pos={{ width: 2, height: 1, row: 1, column: 2 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>Usage of this tag over time</div>
-                            <div style={{ maxWidth: (windowWidth ?? 100) / 2 }} className='w-full'>
-                                <LineChart data={data.usageOverTime} />
-                            </div>
-                        </GridElement>
-                        <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 2, column: 0 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>Most Recent Usage of this Tag:</div>
+                        <GridElement className='border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 3, column: 0 }}>
+                            <div className='w-full text-2xl flex flex-col items-center'>Most Recent Usage of this Tag:</div>
                             <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
                                 <div className='w-fit'>{RichQuoteToString(data.quotesTaggedWithTarget.last)}</div>
                             </div>
                         </GridElement>
-                        <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 2, column: 1 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>Most Recent Usage of this Tag:</div>
+                        <GridElement className=' border-gray-900 border-2 rounded-xl p-2 flex flex-col' pos={{ width: 1, height: 1, row: 3, column: 1 }}>
+                            <div className='w-full text-2xl flex flex-col items-center'>First Use of this Tag:</div>
                             <div className='w-full h-auto flex-grow flex flex-col items-center justify-center'>
-                                <div className='w-fit'>{RichQuoteToString(data.quotesTaggedWithTarget.first)}</div>
+                                <div className=''>{RichQuoteToString(data.quotesTaggedWithTarget.first)}</div>
                             </div>
                         </GridElement>
-                        <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 2, height: 1, row: 2, column: 2 }}>
-                            <div className='w-full text-xl flex flex-col items-center'>All Usages of this Tag:</div>
-                            <div className='flex flex-col items-center' style={{ maxWidth: (windowWidth ?? 100) / 2 }}>
-                                <Carousel className='w-[85%]'>
+                        <GridElement className='border-gray-900 border-2 rounded-xl p-2' pos={{ width: 2, height: 1, row: 3, column: 2 }}>
+                            <div className='w-full text-2xl flex flex-col items-center'>All Usages of this Tag:</div>
+                            <div className='flex flex-col items-center px-16' style={{ maxWidth: (windowWidth ?? 100) / 2 }}>
+                                <Carousel className='w-full'>
                                     <CarouselContent>
                                         {
-                                            data.quotesTaggedWithTarget.all.map((q,i) => 
+                                            data.quotesTaggedWithTarget.all.map((q, i) =>
                                                 <CarouselItem key={i} className='w-fit flex flex-col items-center justify-center'>
                                                     <div>{RichQuoteToString(q)}</div>
                                                 </CarouselItem>
@@ -141,30 +324,50 @@ function analyseData(dataSources: { rich_quotes: RichQuote[], authors: Author[],
     const filteredQuotes = dataSources.rich_quotes.filter(q => q.tags.some((t) => t.id === target.id));
 
     //Usage of target tag per author
-    const authorInstances = filteredQuotes.reduce((acc: { [k: string]: number }, quote) => {
-        acc[tagToString(quote.author.tag)] = (acc[tagToString(quote.author.tag)] || 0) + 1;
+    const authorInstancesData = Object.entries(filteredQuotes.reduce((acc: { [k: string]: number }, quote) => {
+        acc[quote.author.preferred_name] = (acc[quote.author.preferred_name] || 0) + 1;
         return acc;
-    }, {});
+    }, {})).map((v, i) => ({ authorName: v[0], uses: v[1], fill: `hsl(var(--chart-${i % 5 + 1}))` }));
+    const authorInstancesConfig = authorInstancesData.reduce((prev: { [k: string]: { label: string, color?: string } }, cur, curIndex) => {
+        prev[cur.authorName] = {
+            label: cur.authorName,
+            color: `hsl(var(--chart-${curIndex % 5 + 1}))`
+        }
+        return prev;
+    }, { 'uses': { 'label': "Uses" } }) satisfies ChartConfig
 
     //Usage of target tag over time (message_date)
-    const rawTagUsage = filteredQuotes.map((q) => q.message_date).reduce((acc: { [k: string]: number }, date) => {
-        const truncatedDate = date.substring(0, 7)
-        acc[truncatedDate] = (acc[truncatedDate] || 0) + 1;
-        return acc;
-    }, {});
-    const dateStartText = Object.keys(rawTagUsage)[Object.keys(rawTagUsage).length - 1]
-    const dateEndText = Object.keys(rawTagUsage)[0]
-    const dateRange = makeDateRange(dateStartText, dateEndText)
+    const rawTagUsage = filteredQuotes.map((q) => q.message_date)   //pull out array of dates
+        .reduce((acc: { [k: string]: number }, date) => {           //tally per date into object (typeof rawTagUsage = { [`${year}-${month}`] : [uses_on_that_date] })
+            const truncatedDate = date.substring(0, 7)              //truncate date into [`${year}-${month}`] format
+            acc[truncatedDate] = (acc[truncatedDate] || 0) + 1;     //update tally for relevant month
+            return acc;
+        }, {});
+    const dateStartText = Object.keys(rawTagUsage)[Object.keys(rawTagUsage).length - 1] //grab the last date a tag was used
+    const dateEndText = Object.keys(rawTagUsage)[0]                                     //grab the first date a tag was used
+    const dateRange = makeDateRange(dateStartText, dateEndText)                         //makes an array of strings, where each is of the year+months in the range provided
+    //> IE. if start was '2023/10/xx' and end was '2024/03/xx', 
+    //> this would return the following array: 
+    //> ['2023-10', '2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
     let tagUsage: { [k: string]: number } = {}
-    dateRange.forEach((d) => { tagUsage[d] = (rawTagUsage[d] || 0) })
+    dateRange.forEach((d) => { tagUsage[d] = (rawTagUsage[d] || 0) })   //fill months with no usages with zeros during copy
+
+    const tagUsageData = Object.entries(tagUsage).map((v) => ({ month: v[0], uses: v[1] }))
+    const tagUsageConfig = { month: { label: 'Month' } } satisfies ChartConfig
 
     //Tags commonly included with target
-    const simmilarTags: { [k: string]: number } = {};
-    filteredQuotes.forEach((q) => {
-        q.tags.toSpliced(q.tags.indexOf(target)).forEach((t) => {
-            simmilarTags[tagToString(t)] = (simmilarTags[tagToString(t)] || 0) + 1
+    const simmilarTagsData = Object.entries(filteredQuotes.reduce((acc: { [k: string]: number }, quote) => {
+        quote.tags.filter((t) => t.id != target.id).forEach((t) => {
+            acc[tagToString(t)] = (acc[tagToString(t)] || 0) + 1;
         })
-    })
+        return acc;
+    }, {})).map(v => ({ tag: v[0], uses: v[1] }));
+    const simmilarTagsConfig = simmilarTagsData.reduce((prev: { [k: string]: { label: string } }, cur) => {
+        prev[cur.tag] = {
+            label: cur.tag
+        }
+        return prev;
+    }, {}) satisfies ChartConfig
 
     //List of quotes with target tag
     const taggedWithTarget = filteredQuotes;
@@ -175,34 +378,19 @@ function analyseData(dataSources: { rich_quotes: RichQuote[], authors: Author[],
     //Last chronological appearance of target tag
     const lastQuoteWithTag = filteredQuotes[0]
 
-    //TODO: It may be that these last two options need switching around, I can't remember if filteredQuotes
-    //      comes in in chronological order, or reverse-chronological order, as numbered by ID.
-
 
     return {
         usagePerAuthor: {
-            labels: Object.keys(authorInstances),
-            datasets: [{
-                label: '# of times this tag is used by this author',
-                data: Object.values(authorInstances),
-                borderWidth: 1
-            }]
+            data: authorInstancesData,
+            chartConfig: authorInstancesConfig,
         },
         usageOverTime: {
-            labels: Object.keys(tagUsage),
-            datasets: [{
-                label: tagToString(target),
-                data: Object.values(tagUsage),
-                tension: 0.3,
-            }]
+            data: tagUsageData,
+            chartConfig: tagUsageConfig,
         },
         commonlyFoundWith: {
-            labels: Object.keys(simmilarTags),
-            datasets: [{
-                label: '# of occurences of tags found with this tag',
-                data: Object.values(simmilarTags),
-                borderWidth: 1
-            }]
+            data: simmilarTagsData,
+            chartConfig: simmilarTagsConfig
         },
         quotesTaggedWithTarget: {
             all: taggedWithTarget,

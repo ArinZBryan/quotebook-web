@@ -1,7 +1,13 @@
 "use client"
 import { Author, RichQuote } from '../api/db/types';
 import { TagStd } from '@/components/component/tag';
-import { DoughnutChart } from '../../components/component/charts-client';
+import { Pie, PieChart } from "recharts"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
 import { Session } from 'next-auth';
 import useWindowDimensions from '@/lib/useWindowDimensions'
 import { Grid, GridElement } from '@/components/component/grid';
@@ -9,22 +15,28 @@ import { Grid, GridElement } from '@/components/component/grid';
 export function DashboardClient({ userauthor, data, session, your_quotes }: {
     userauthor: Author | null,
     data: {
-        tags: {
-            labels: string[];
-            datasets: {
-                label: string;
-                data: number[];
-                borderWidth: number;
+        your_tags_usage: {
+            config: {
+                [k: string]: {
+                    label: string;
+                };
+            };
+            data: {
+                authorName: string;
+                uses: number;
             }[];
-        },
-        includes: {
-            labels: string[];
-            datasets: {
-                label: string;
-                data: number[];
-                borderWidth: number;
+        };
+        your_usage_by_others: {
+            config: {
+                [k: string]: {
+                    label: string;
+                };
+            };
+            data: {
+                authorName: string;
+                uses: number;
             }[];
-        }
+        };
     },
     session: Session | null,
     your_quotes: RichQuote[],
@@ -35,26 +47,26 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
     const smallWindow = (windowWidth! < 470)
 
     const most_recent_quote = your_quotes[0] ?? {
-        'preamble': "", 
-        'quote': "", 
+        'preamble': "",
+        'quote': "",
         'author': {
-            'id': -1, 
-            'preferred_name': "No Author Assigned To This Account", 
-            'search_text': "", 
+            'id': -1,
+            'preferred_name': "No Author Assigned To This Account",
+            'search_text': "",
             'tag': {
-                'category': "Person", 
-                'id': -1, 
+                'category': "Person",
+                'id': -1,
                 'title': "No Author Assigned To This Account"
             }
-        }, 
-        'date': "", 
-        'confirmed_date': 'false', 
-        'message_id': '', 
+        },
+        'date': "",
+        'confirmed_date': 'false',
+        'message_id': '',
         'id': -1,
         'tags': [
             {
-                'category': "Miscellaneous", 
-                'id': -1, 
+                'category': "Miscellaneous",
+                'id': -1,
                 'title': "Tag Not Found"
             }
         ]
@@ -68,7 +80,7 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
             <GridElement className='w-full h-full  border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 2, row: 1, column: 0 }}>
                 <div className='text-gray-600 flex flex-col space-y-1'>
                     <div>ID: {userauthor?.id}</div>
-                    <div className='flex flex-row flex-wrap'>Tag: <TagStd tag={userauthor?.tag ?? { 'category': "Person", 'id': -1, 'title': "No Author Assigned To This Account" }} overrideColor='aaaaaa'/></div>
+                    <div className='flex flex-row flex-wrap'>Tag: <TagStd tag={userauthor?.tag ?? { 'category': "Person", 'id': -1, 'title': "No Author Assigned To This Account" }} overrideColor='aaaaaa' /></div>
                     <div className='flex flex-row flex-wrap'>Aliases: <span className='flex flex-row flex-wrap w-full'>{userauthor?.search_text.split(",").map((v, i) => <span className='flex-shrink-0 pt-1 pb-1' key={i}><TagStd tag={{ 'category': 'Person', 'id': userauthor?.tag.id!, 'title': v }} overrideColor='242930' /></span>)}</span></div>
                 </div>
             </GridElement>
@@ -80,12 +92,44 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
             </GridElement>
             <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 3, row: 3, column: 0 }}>
                 <div className='h-full'>Your quotes are tagged with:
-                    <DoughnutChart data={data.tags} />
+                    <ChartContainer
+                        config={data.your_tags_usage.config}
+                        className="aspect-square"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={data.your_tags_usage.data}
+                                dataKey="uses"
+                                nameKey="authorName"
+                                innerRadius={"50%"}
+                            />
+                        </PieChart>
+                    </ChartContainer>
                 </div>
             </GridElement>
             <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 3, row: 6, column: 0 }}>
                 <div className='h-full'>You are often included in quotes by:
-                    <DoughnutChart data={data.includes} />
+                    <ChartContainer
+                        config={data.your_usage_by_others.config}
+                        className="aspect-square"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={data.your_usage_by_others.data}
+                                dataKey="uses"
+                                nameKey="authorName"
+                                innerRadius={"50%"}
+                            />
+                        </PieChart>
+                    </ChartContainer>
                 </div>
             </GridElement>
         </Grid>
@@ -98,7 +142,7 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
             <GridElement className='w-full h-full  border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 2, row: 1, column: 0 }}>
                 <div className='text-gray-600 flex flex-col space-y-1'>
                     <div>ID: {userauthor?.id}</div>
-                    <div className='flex flex-row flex-wrap'>Tag: <TagStd tag={userauthor?.tag ?? { 'category': "Person", 'id': -1, 'title': "No Author Assigned To This Account" }} overrideColor='aaaaaa'/></div>
+                    <div className='flex flex-row flex-wrap'>Tag: <TagStd tag={userauthor?.tag ?? { 'category': "Person", 'id': -1, 'title': "No Author Assigned To This Account" }} overrideColor='aaaaaa' /></div>
                     <div className='flex flex-row flex-wrap'>Aliases: <span className='flex flex-row flex-wrap w-full'>{userauthor?.search_text.split(",").map((v, i) => <span className='flex-shrink-0 pt-1 pb-1' key={i}><TagStd tag={{ 'category': 'Person', 'id': userauthor?.tag.id!, 'title': v }} overrideColor='242930' /></span>)}</span></div>
                 </div>
             </GridElement>
@@ -110,12 +154,44 @@ export function DashboardClient({ userauthor, data, session, your_quotes }: {
             </GridElement>
             <GridElement className='h-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 3, row: 3, column: 0 }}>
                 <div className='h-full' style={{ width: (windowWidth / 2 * 0.9) }}>Your quotes are tagged with:
-                    <DoughnutChart data={data.tags} />
+                    <ChartContainer
+                        config={data.your_tags_usage.config}
+                        className="aspect-square"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={data.your_tags_usage.data}
+                                dataKey="uses"
+                                nameKey="authorName"
+                                innerRadius={"50%"}
+                            />
+                        </PieChart>
+                    </ChartContainer>
                 </div>
             </GridElement>
             <GridElement className='h-full w-full border-gray-900 border-2 rounded-xl p-2' pos={{ width: 1, height: 3, row: 3, column: 1 }}>
                 <div className='h-full' style={{ width: (windowWidth / 2 * 0.9) }}>You are often included in quotes by:
-                    <DoughnutChart data={data.includes} />
+                    <ChartContainer
+                        config={data.your_usage_by_others.config}
+                        className="aspect-square"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={data.your_usage_by_others.data}
+                                dataKey="uses"
+                                nameKey="authorName"
+                                innerRadius={"50%"}
+                            />
+                        </PieChart>
+                    </ChartContainer>
                 </div>
             </GridElement>
         </Grid>

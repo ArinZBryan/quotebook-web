@@ -3,58 +3,50 @@ import { api } from '@/api'
 import { Tag } from '../api/db/types';
 
 import { DashboardClient } from './dashboard-client';
+import { ChartConfig } from '@/components/ui/chart';
 
 export async function Dashboard() {
 
     const session = await auth();
     const userauthor = await api.get.userauthor(session?.user.linked_author ?? null)
     const all_quotes = await api.get.richquotes();
+    
     const your_quotes = all_quotes.filter((q) => q.author.id == userauthor?.id )
-    
-    const your_quotes_tags = your_quotes.map((q) => q.tags)
-    
-    let tag_data : { value: number, label: string }[] = []
-
-    your_quotes_tags.forEach((v) => {
-        v.forEach((t) => {
-            let in_tags : number = -1;
-            for (let i = 0; i < tag_data.length; i++) if (tagToString(t) == tag_data[i].label) { in_tags = i }
-            if (in_tags != -1) { tag_data[in_tags].value++; }
-            else { tag_data.push({value: 1, label: tagToString(t)})}
+    const your_tags_usage_data = Object.entries(your_quotes.reduce((acc: { [k: string]: number }, quote) => {
+        quote.tags.filter((t) => t.id != userauthor?.tag.id).forEach((t) => {
+            acc[tagToString(t)] = (acc[tagToString(t)] || 0) + 1;
         })
-    })
+        return acc;
+    }, {})).map(v => ({ authorName: v[0], uses: v[1] }));
+    const your_tags_usage_config = your_tags_usage_data.reduce((prev: { [k: string]: { label: string } }, cur) => {
+        prev[cur.authorName] = {
+            label: cur.authorName
+        }
+        return prev;
+    }, {}) satisfies ChartConfig
 
-    const you_appear_in = all_quotes.filter(q => q.tags.includes(userauthor?.tag!))
-
-    let author_data : { value: number, label: string }[] = []
-
-    you_appear_in.forEach((v) => {
-        let in_author_data : number = -1;
-        for (let i = 0; i < author_data.length; i++) if (v.author.preferred_name == author_data[i].label) { in_author_data = i }
-        if (in_author_data != -1) { author_data[in_author_data].value++; }
-        else { tag_data.push({value: 1, label: v.author.preferred_name})}
-    })
+    const others_quotes = all_quotes.filter((q) => q.author.id != userauthor?.id)
+    const your_usage_by_others_data = Object.entries(others_quotes.reduce((acc: { [k: string]: number }, quote) => {
+        quote.tags.filter((t) => t.id == userauthor?.tag.id).forEach((t) => {
+            acc[quote.author.preferred_name] = (acc[quote.author.preferred_name] || 0) + 1;
+        })
+        return acc
+    }, {})).map(v => ({authorName: v[0], uses: v[1]}))
+    const your_usage_by_others_config = your_usage_by_others_data.reduce((prev: { [k: string]: { label: string } }, cur) => {
+        prev[cur.authorName] = {
+            label: cur.authorName
+        }
+        return prev;
+    }, {}) satisfies ChartConfig
 
     const data = { 
-        tags: {
-            labels: tag_data.map((v) => v.label),
-            datasets: [
-                {
-                    label: '# of uses in your quotes',
-                    data: tag_data.map((v) => v.value),
-                    borderWidth: 1,
-                },
-            ],
+        your_tags_usage: {
+            config: your_tags_usage_config,
+            data: your_tags_usage_data
         }, 
-        includes: {
-            labels: tag_data.map((v) => v.label),
-            datasets: [
-                {
-                    label: "# of your appearance in peoples' quotes",
-                    data: tag_data.map((v) => v.value),
-                    borderWidth: 1,
-                },
-            ],
+        your_usage_by_others: {
+            config: your_usage_by_others_config,
+            data: your_usage_by_others_data,
         }
     };
 
