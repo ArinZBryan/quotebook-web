@@ -127,6 +127,9 @@ function NavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                         <ListItem href="/stats/tags" title="Tags">
                             View Statistics for Tags
                         </ListItem>
+                        <ListItem href="/stats/random" title="Random Quotes">
+                            View random quotes
+                        </ListItem>
                     </ul>
                 </NavigationMenuContent>
             </NavigationMenuItem>
@@ -193,6 +196,9 @@ function CondensedNavButtons({ userIsAdmin }: { userIsAdmin: boolean }) {
                         </ListItem>
                         <ListItem href="/stats/tags" title="Tags">
                             View Statistics for Tags
+                        </ListItem>
+                        <ListItem href="/stats/random" title="Random Quotes">
+                            View random quotes
                         </ListItem>
                     </ul>
                 </NavigationMenuContent>
